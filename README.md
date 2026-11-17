@@ -11,7 +11,7 @@
 
 ![Version](./docs/assets/badges/version.svg) ![Synthetic only](./docs/assets/badges/synthetic.svg) ![Default](./docs/assets/badges/default.svg) ![Cloud static only](./docs/assets/badges/static-only.svg)
 
-A runnable, evidence-led proof of concept for teams that review periodic measurements from uploaded documents. Extract real text and cells, reconcile uncertain records, ask evidence-grounded questions, approve draft follow-ups, and publish an immutable period snapshot. Start with generated synthetic files and deterministic local answers; explicitly opt into Azure Content Understanding custom schema extraction for varied document layouts and optional model explanations when you have an authorized environment.
+A runnable, evidence-led proof of concept for teams that review periodic measurements from uploaded documents. Extract real text and cells, reconcile uncertain records, ask evidence-grounded questions, approve draft follow-ups, and publish an immutable period snapshot. Local rehearsal uses synthetic files and deterministic answers. Azure deployment enables Content Understanding extraction and model-backed explanations by default.
 
 > [!IMPORTANT]
 > The default is **local synthetic rehearsal**, not an LLM and not an Azure deployment. No customer corpus, scanned-document quality target, production security certification, or live Azure deployment is claimed.
@@ -49,58 +49,39 @@ Draft follow-ups are an open-points list: suggestions remain drafts until a huma
 | **4** | <img src="./docs/assets/icons/users.svg" width="24" alt="Review"/> | Select a local role and load the sample scenario | Provider labels say local; review actual evidence. |
 | **5** | <img src="./docs/assets/icons/gear.svg" width="24" alt="Tests"/> | `npm test` and `npm run evaluate` | Read measured fixture results and limitations. |
 
-### Deploy to Azure with azd (recommended)
+### Deploy the complete demo to Azure (recommended)
 
-Install Azure CLI, Azure Developer CLI, PowerShell 7 and Node.js 24+. Run from this repository's root. First complete the [Entra API/SPA registrations, scope and role assignments](./docs/03-deployment.md#portal-identity-setup--required-outside-bicep); replace the placeholders below with that configuration and your approved deployment target.
-
-**The minimal path below leaves cloud AI off:** extraction and answers use the local implementations. For Content Understanding, replace its `false` setting with the [completion/embedding model and setup-principal settings](./docs/03-deployment.md#phase-4--enable-extraction-and-answers-independently) before preview and `azd up`. Optional Azure OpenAI answers are configured independently. Model names, versions, region and quota must match your target.
+Install Azure CLI, Azure Developer CLI, PowerShell 7 and Node.js 24+. From this repository's root, run:
 
 ```powershell
-$TenantId = '<approved-tenant-id>'
-$SubscriptionId = '<approved-subscription-id>'
-$Location = '<approved-region>'
-$ApiClientId = '<existing-api-application-client-id-guid>'
-$SpaClientId = '<existing-public-spa-client-id-guid>'
-$ApiScope = "api://$ApiClientId/access_as_user"
-
-az login --tenant $TenantId
-az account set --subscription $SubscriptionId
-az account show --query '{tenant:tenantId,subscription:id,user:user.name}' -o table
-# Stop if the tenant or subscription does not match your target.
-azd auth login --tenant-id $TenantId
-azd env new workbench01
-azd env set AZURE_TENANT_ID $TenantId
-azd env set AZURE_SUBSCRIPTION_ID $SubscriptionId
-azd env set AZURE_LOCATION $Location
-azd env set ENTRA_AUDIENCE $ApiClientId
-azd env set ENTRA_CLIENT_ID $SpaClientId
-azd env set ENTRA_API_SCOPE $ApiScope
-azd env set DEPLOY_CONTENT_UNDERSTANDING false
-azd env set DEPLOY_OPENAI false
-azd env get-values
-azd provision --preview
-# Review the plan before provisioning billable resources.
 azd up
 ```
 
-This provisions the hosted workbench, persistent database and supporting resources, builds the application remotely and deploys it.
+On the first run, supply an environment name, your **explicit demo tenant and subscription**, and a region (`swedencentral` is the default). The bootstrap verifies both CLI contexts and signs in to the selected tenant if needed; it never silently adopts an ambient account.
 
-After deployment, read `appUrl` in `demo-ids.local.json` and register its exact `https://<deployed-app-host>/auth/callback` SPA redirect URI. Then open the app and sign in. Full setup, verification and teardown: [Deployment](./docs/03-deployment.md).
+The command orchestrates the entire default cloud stack: Container Apps, remote container build/registry, Cosmos DB, managed identity/RBAC, logs, **Content Understanding plus completion and embedding deployments**, **Azure OpenAI answers**, and the custom analyzer. It also creates/reuses the demo's API/SPA registrations, scope, roles and service principals, grants only the current operator the demo's manager role, and registers the deployed sign-in callback. No client secret or tenant-wide consent grant is created.
+
+Open the application URL shown at completion (`appUrl` in ignored `demo-ids.local.json`) and sign in. Your subscription must have suitable model quota and Azure deployment/RBAC permissions, and your account must be allowed to create applications and assign the demo app role. The command does not bypass those requirements or switch regions silently. Full permissions, adjustable model defaults, verification and teardown: [Deployment](./docs/03-deployment.md) and [Configuration](./docs/08-configuration-reference.md).
 
 ### Azure CLI alternative (no azd required)
 
-Use the same target/identity variables and verified Azure CLI login from above; skip the `azd` commands. This script uses the same Bicep, remote build and deployment helpers:
+The Azure CLI-backed script prompts for the same target settings and uses the same Bicep, identity bootstrap and default AI resources:
 
 ```powershell
-$env:ENTRA_CLIENT_ID = $SpaClientId
-$env:ENTRA_API_SCOPE = $ApiScope
-$env:DEPLOY_CONTENT_UNDERSTANDING = 'false'
-$env:DEPLOY_OPENAI = 'false'
-.\scripts\deploy.ps1 -TenantId $TenantId -SubscriptionId $SubscriptionId `
-  -EnvironmentName 'workbench01' -Location $Location -EntraAudience $ApiClientId
+.\scripts\deploy.ps1
 ```
 
-For cloud extraction, supply the same Content Understanding settings as process environment variables before invoking this alternative. If templates are prohibited, use the [Portal and imperative CLI deployment](./docs/03b-manual-deployment.md).
+Cloud AI can be explicitly disabled with `DEPLOY_CONTENT_UNDERSTANDING=false` or `DEPLOY_OPENAI=false`; `AUTO_CONFIGURE_ENTRA=false` uses existing, manually configured registrations. Local rehearsal remains local and does not provision anything. If templates are prohibited, use the [Portal and imperative CLI deployment](./docs/03b-manual-deployment.md).
+
+**Upgrading an existing azd environment:** previous explicit opt-outs are preserved. Re-enable the complete stack before redeploying:
+
+```powershell
+azd env set DEPLOY_CONTENT_UNDERSTANDING true
+azd env set DEPLOY_OPENAI true
+azd up
+```
+
+Directory application registrations are outside the Azure resource group: `azd down` does not delete them. Follow the documented explicit identity cleanup when retiring the demo.
 
 > [!WARNING]
 > Keep local authentication on loopback. Never expose the local role selector as cloud authentication. Azure requires validated Microsoft Entra access tokens and configured application roles.
@@ -111,12 +92,12 @@ For cloud extraction, supply the same Content Understanding settings as process 
 |---|---|---|---|
 | Authentication | Server-issued synthetic role cookie | Entra JWT validation | Use local only on a trusted workstation. |
 | Persistence | Atomic JSON, single process | Cosmos DB, managed identity | Azure for restart-persistent hosted evaluation. |
-| Extraction | Real embedded PDF text and structured-file parsers | Optional Content Understanding custom field schema, confidence and source grounding; XLSX/CSV/JSON still parse locally | Authorize the whole source before cloud model processing; validate every field and keep human review. |
-| Answers | Deterministic evidence renderer | Optional Azure OpenAI Responses | Compare the same authorized evidence and test abstention. |
-| Operations | No Azure spend | Container, database, logs and optional AI cost | Start local; agree a budget before cloud provisioning. |
+| Extraction | Real embedded PDF text and structured-file parsers | Default Content Understanding custom field schema, confidence and source grounding; XLSX/CSV/JSON still parse locally | Authorize the whole source before cloud model processing; validate every field and keep human review. |
+| Answers | Deterministic evidence renderer | Default Azure OpenAI Responses | Compare the same authorized evidence and test abstention. |
+| Operations | No Azure spend | Container, database, logs and AI cost | Start local; agree a budget before cloud provisioning. |
 | Validation | Reproducible small synthetic fixtures | Must be run in your environment | Do not transfer fixture results into customer-quality claims. |
 
-Local validation on **2026-11-17**: **47/47 Node tests**, **10/10 Edge browser tests**, **3/3 Python documentation tests** and **23/23 synthetic evaluation checks** (`fixtureOnly=true`) passed. The browser evidence was recaptured from the real local rehearsal, including unit-correction coverage; all Content Understanding service requests in these tests were mocked. See [Testing](./docs/04-testing.md#actual-local-fixture-snapshot--2026-11-17) for the tiny evaluation's scope and limitations, separately from live validation.
+Local validation on **2026-11-17**: the latest full suite passed **66/66 Node tests**, including default-cloud orchestration and managed identity-registration coverage. The earlier same-day **10/10 Edge browser tests**, **3/3 Python documentation tests** and **23/23 synthetic evaluation checks** (`fixtureOnly=true`) remain documented; the three Python checks also passed after this deployment update. Browser evidence came from the real local rehearsal, including unit-correction coverage. Azure, Graph, OAuth and Content Understanding requests in automated coverage are mocked, not a live deployment. See [Testing](./docs/04-testing.md#actual-local-fixture-snapshot--2026-11-17) for the fixture scope and limitations, separately from live validation.
 
 ## What's inside
 

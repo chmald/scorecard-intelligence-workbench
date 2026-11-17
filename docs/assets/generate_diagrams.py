@@ -23,7 +23,7 @@ class Diagram:
                  f"rounded=0;fillColor={PURPLE};strokeColor=none;")
         self.text(f"<b>{title}</b>", 40, 40, width - 80, 50, 28)
         self.text(subtitle, 40, 100, width - 80, 40, 16, GRAY)
-        self.text("Legend: DEFAULT = reproducible local path | OPT-IN = Azure capability | GATE = human or policy decision",
+        self.text("Legend: DEFAULT = included in the selected local/cloud path | OPT-IN = explicit test | GATE = human or policy decision",
                   40, height - 90, width - 80, 30, 13, GRAY)
         self.text("Scorecard Intelligence Workbench | 2026-11-17 | Icons: Microsoft Azure V24 + Entra + official Content Understanding artwork",
                   40, height - 50, width - 80, 24, 11, GRAY)
@@ -109,14 +109,14 @@ def steps(name, title, subtitle, rows):
 
 def main():
     d = Diagram("scorecard-intelligence-workbench-architecture", "Evidence-led scorecard workbench",
-                "Deterministic records first; humans approve; optional Azure services never decide publication.", 1900, 1050)
+                "Local rehearsal stays local; cloud AI deploys by default; humans alone approve publication.", 1900, 1050)
     columns = [
         ("Sources + extraction", "file", [("Uploaded bytes", "Local structured / approved cloud sources", "file", "DEFAULT"),
-                             ("Content Understanding", "Custom fields; authorized whole source", "content-understanding", "OPT-IN")]),
+                             ("Content Understanding", "Cloud default; authorized whole source", "content-understanding", "DEFAULT")]),
         ("Trusted server", "container-apps", [("Node.js 24", "Validate session, file, scope and input", "container-apps", "DEFAULT"),
                                              ("Evidence normalization", "Validate fields, confidence and source spans", "gear", "DEFAULT")]),
         ("Policy and intelligence", "entra-id", [("Authorization first", "PKCE access token; filter allowed evidence", "entra-id", "GATE"),
-                                                ("Explanations", "Local deterministic OR Responses", "azure-openai", "OPT-IN")]),
+                                                ("Explanations", "Local deterministic / cloud Responses", "azure-openai", "DEFAULT")]),
         ("Human workflow", "users", [("Confirm and approve", "Reviewer confirms; manager approves", "users", "GATE"),
                                      ("Publish and freeze", "Rules + evidence in immutable snapshot", "keys", "GATE")]),
         ("State and operations", "cosmos-db", [("Persistent state", "Atomic JSON locally / Cosmos in Azure", "cosmos-db", "DEFAULT"),
@@ -141,43 +141,43 @@ def main():
     d = Diagram("service-catalog", "Service catalog", "Inventory by responsibility; Azure services are a deployment path, not a claim of live validation.", 1600, 1050)
     groups = [
         ("Experience and runtime", "container-apps", [("Browser + Node.js", "Accessible UI and server API", "code", "DEFAULT"),
-                                                    ("Azure Container Apps", "Single replica application host", "container-apps", "OPT-IN")]),
-        ("Data and extraction", "cosmos-db", [("Cosmos DB for NoSQL", "Cloud state with ETag concurrency", "cosmos-db", "OPT-IN"),
-                                              ("Content Understanding", "Custom fields; confidence + source grounding", "content-understanding", "OPT-IN")]),
-        ("Identity and build", "entra-id", [("Microsoft Entra ID", "SPA PKCE; API validates scope and roles", "entra-id", "GATE"),
-                                           ("Container Registry", "Remote image build and pull", "container-registry", "OPT-IN")]),
-        ("Explanations and observability", "azure-openai", [("Azure OpenAI", "Responses after evidence filtering", "azure-openai", "OPT-IN"),
-                                                           ("Monitor resources", "Application Insights + Log Analytics", "application-insights", "OPT-IN")]),
+                                                    ("Azure Container Apps", "Cloud default; single replica host", "container-apps", "DEFAULT")]),
+        ("Data and extraction", "cosmos-db", [("Cosmos DB for NoSQL", "Cloud default; ETag concurrency", "cosmos-db", "DEFAULT"),
+                                              ("Content Understanding", "Cloud default; custom fields + grounding", "content-understanding", "DEFAULT")]),
+        ("Identity and build", "entra-id", [("Microsoft Entra ID", "Automatic API + SPA; operator manager only", "entra-id", "GATE"),
+                                           ("Container Registry", "Cloud default; remote build and pull", "container-registry", "DEFAULT")]),
+        ("Explanations and observability", "azure-openai", [("Azure OpenAI", "Cloud default; grounded Responses", "azure-openai", "DEFAULT"),
+                                                           ("Monitor resources", "Cloud default; Insights + Log Analytics", "application-insights", "DEFAULT")]),
     ]
     for i, (title, icon, items) in enumerate(groups):
         x, y = 40 + (i % 2) * 780, 170 + (i // 2) * 350
         d.lane(title, icon, x, y, 740, 300)
         for j, item in enumerate(items):
             d.tile(item[0], item[1], item[2], x + 20 + j * 360, y + 100, 340, 125, item[3])
-    d.text("How to read: local parsing and deterministic questions need no Azure account. Each OPT-IN item adds an explicit deployment or provider choice.",
+    d.text("How to read: local rehearsal needs no Azure account. One guarded azd up deploys all cloud resources; directory permissions and model quota remain prerequisites.",
            50, 875, 1500, 50, 16)
     d.save()
 
     steps("prerequisites-map", "Prerequisite map", "Complete the local lane first; cloud identity, provider availability and permissions are independent gates.", [
         ("Local tools", "Node.js 24, npm, Python; generated samples", "dev-console", "DEFAULT"),
         ("Target subscription", "Confirm tenant, subscription and region", "resource-group", "GATE"),
-        ("Human permissions", "Resource creation + role assignment authority", "entra-id", "GATE"),
-        ("Runtime identity", "App roles and managed identity data roles", "managed-identity", "GATE"),
-        ("Content Understanding", "Custom schema; two explicit model deployments", "content-understanding", "OPT-IN"),
+        ("Human permissions", "Azure roles + directory app/assignment authority", "entra-id", "GATE"),
+        ("Runtime identity", "Auto API + SPA; operator manager; data roles", "managed-identity", "GATE"),
+        ("Content Understanding", "Cloud default; completion + embedding quota", "content-understanding", "DEFAULT"),
         ("Budget and policy", "Set spending controls; review data residency", "cost-management", "GATE")])
-    steps("azd-deployment-flow", "Azure deployment flow", "One subscription-scoped wrapper calls the same main Bicep used by the imperative deployment entry point.", [
-        ("Authenticate both CLIs", "Explicit tenant and subscription; verify", "entra-id", "GATE"),
-        ("Preprovision guard", "Validate names, target and required identity", "powershell", "GATE"),
-        ("Provision shared Bicep", "Resources, identity; optional CU model deployments", "resource-group", "OPT-IN"),
-        ("Setup then remote build", "Create CU analyzer; build application image", "container-registry", "OPT-IN"),
-        ("Deploy revision", "Apply app configuration and managed identity", "container-apps", "OPT-IN"),
+    steps("azd-deployment-flow", "Azure deployment flow", "Single azd up: explicit verified target, automatic directory bootstrap, default-on cloud services and application.", [
+        ("Preup: verify target", "Resolve tenant/subscription/region; both logins", "entra-id", "GATE"),
+        ("Bootstrap API + SPA", "Scope, roles, service principals; operator manager", "app-registrations", "DEFAULT"),
+        ("Validate + provision", "Strict guard; Bicep includes CU + Responses", "resource-group", "DEFAULT"),
+        ("Postprovision setup", "Merge callback; CU mappings/analyzer; local IDs", "content-understanding", "DEFAULT"),
+        ("Build + deploy revision", "Remote image build; managed-identity runtime", "container-apps", "DEFAULT"),
         ("Verify and record", "Health, token roles, Cosmos restart persistence", "application-insights", "GATE")])
     steps("manual-deployment-steps", "Manual deployment map", "Portal or CLI must create the same resources and bindings; a running container alone is not parity.", [
-        ("Create foundation", "Resource group, logs and app telemetry", "resource-group", "OPT-IN"),
-        ("Create identity + registry", "User-assigned identity, image build, pull role", "container-registry", "OPT-IN"),
-        ("Create Cosmos state", "Database, /id container and data role", "cosmos-db", "OPT-IN"),
-        ("Content Understanding setup", "Models, scoped RBAC, defaults + custom schema", "content-understanding", "OPT-IN"),
-        ("Create application", "Entra settings, identity, ingress, one replica", "container-apps", "OPT-IN"),
+        ("Bootstrap + foundation", "Verify target; API/SPA; group, logs, telemetry", "resource-group", "DEFAULT"),
+        ("Create identity + registry", "User-assigned identity, image build, pull role", "container-registry", "DEFAULT"),
+        ("Create Cosmos state", "Database, /id container and data role", "cosmos-db", "DEFAULT"),
+        ("Create AI services", "CU models/analyzer + separate Responses model", "content-understanding", "DEFAULT"),
+        ("Create application", "Entra, managed identity; merge exact callback", "container-apps", "DEFAULT"),
         ("Compare and test", "Match outputs; run the same cloud tests", "gear", "GATE")])
     steps("walkthrough", "Presenter walkthrough", "Tell a reproducible evidence story without presenting deterministic rehearsal as a live model.", [
         ("Declare mode", "Show synthetic data and provider labels", "users", "DEFAULT"),
@@ -190,11 +190,11 @@ def main():
         ("Template defaults", "Committed neutral configuration + domain", "file", "DEFAULT"),
         ("Local configuration", "Ignored demo-ids.local.json replaces template", "folder", "DEFAULT"),
         ("Process environment", "Explicit runtime and provider overrides", "gear", "GATE"),
-        ("azd environment", "Quoted substitutions to shared Bicep inputs", "powershell", "OPT-IN"),
-        ("Deployed settings", "Outputs to identity, Cosmos and app revision", "container-apps", "OPT-IN"),
+        ("Bootstrap + azd inputs", "Explicit target; identity IDs; cloud AI defaults", "powershell", "DEFAULT"),
+        ("Deployed settings", "Callback + analyzer; outputs; app revision", "container-apps", "DEFAULT"),
         ("Consumers", "Local parsers / CU schema; rules, UI and answers", "code", "DEFAULT")])
     steps("browser-authentication-flow", "Browser sign-in and API authorization",
-          "Public SPA authorization code + S256 PKCE; app registrations and tenant validation remain operator prerequisites.", [
+          "Bootstrap creates or reuses API + public SPA; exact callback merged after provisioning; directory authority required.", [
         ("Read public settings", "/api/auth/config; no secret or source data", "gear", "GATE"),
         ("Redirect to Entra", "SPA client, API scope, state and S256 challenge", "entra-id", "GATE"),
         ("Validate callback", "/auth/callback; one-use transaction", "app-registrations", "GATE"),
@@ -252,7 +252,7 @@ def main():
     authorized = d.diamond("Is /api/session<br>authorized?", 630, 180)
     identity = d.tile("Microsoft Entra ID", "Check issuer, audience, tenant and roles", "entra-id", 560, 430, 410, 110, "GATE")
     providers = d.diamond("Does failure involve<br>an Azure provider?", 1190, 180)
-    azure = d.tile("Content Understanding / answers", "Check analyzer, models, roles, grounding and polling", "content-understanding", 1130, 430, 470, 110, "OPT-IN")
+    azure = d.tile("Content Understanding / answers", "Check analyzer, models, roles, grounding and polling", "content-understanding", 1130, 430, 470, 110, "DEFAULT")
     parse = d.tile("Local parser", "Check source bytes, aliases and warnings", "file", 100, 720, 440, 100)
     workflow = d.tile("Workflow conflict", "Reload ETag/version; confirm before publish", "cosmos-db", 660, 720, 450, 100, "GATE")
     d.edge(local, process, "No", True)
@@ -265,7 +265,7 @@ def main():
     d.edge(parse, workflow, "If state conflict")
     d.save()
 
-    d = Diagram("mode-comparison", "Local rehearsal and Azure deployment", "Same review workflow; different identity, state and optional intelligence boundaries.", 1600, 1000)
+    d = Diagram("mode-comparison", "Local rehearsal and Azure deployment", "Local providers stay local; all cloud resources deploy by default after explicit target and permission checks.", 1600, 1000)
     lanes = [
         ("Local synthetic rehearsal", "dev-console", 40, [
             ("Identity", "Loopback-only server-issued role cookie", "users", "DEFAULT"),
@@ -273,14 +273,14 @@ def main():
             ("Intelligence", "Real text extraction; deterministic answers", "gear", "DEFAULT")]),
         ("Azure deployment path", "container-apps", 820, [
             ("Identity", "Entra JWT + app role validation", "entra-id", "GATE"),
-            ("State", "Cosmos DB + ETags; managed identity", "cosmos-db", "OPT-IN"),
-            ("Intelligence", "Content Understanding fields; Responses independently opt-in", "content-understanding", "OPT-IN")]),
+            ("State", "Cosmos DB + ETags; managed identity", "cosmos-db", "DEFAULT"),
+            ("Intelligence", "Default CU custom fields + Responses", "content-understanding", "DEFAULT")]),
     ]
     for title, icon, x, items in lanes:
         d.lane(title, icon, x, 170, 740, 640)
         for j, item in enumerate(items):
             d.tile(item[0], item[1], item[2], x + 30, 270 + j * 170, 680, 100, item[3])
-    d.text("Recommendation: rehearse locally, then validate identity and persistence in Azure before enabling billable AI providers.",
+    d.text("Recommendation: rehearse locally, then deploy the full cloud path and validate identity, state and AI independently. Cloud deployment is billable.",
            50, 840, 1490, 60, 18, TEAL)
     d.save()
 

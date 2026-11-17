@@ -9,7 +9,7 @@ param(
     [switch]$Manual
 )
 $ErrorActionPreference = 'Stop'
-. (Join-Path $PSScriptRoot '..\infra\hooks\common.ps1')
+. (Join-Path $PSScriptRoot '..\infra\hooks\bootstrap.ps1')
 $root = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
 $env:AZURE_TENANT_ID = $TenantId
 $env:AZURE_SUBSCRIPTION_ID = $SubscriptionId
@@ -17,12 +17,19 @@ $env:AZURE_ENV_NAME = $EnvironmentName
 $env:AZURE_LOCATION = $Location
 $env:ENTRA_AUDIENCE = $EntraAudience
 $env:AZURE_RESOURCE_GROUP = $ResourceGroup
-$settings = Get-DeploymentSettings
-Assert-DeploymentConfiguration $settings
+$settings = Initialize-WorkbenchDeployment
+$TenantId = $settings.tenantId
+$SubscriptionId = Get-Setting 'AZURE_SUBSCRIPTION_ID'
+$EnvironmentName = $settings.environmentName
+$Location = $settings.location
 $null = Assert-AzureContext $TenantId $SubscriptionId
 Assert-NoSoftDeletedResources $settings $SubscriptionId
 Push-Location $root
 try {
+    if (-not (Test-Path -LiteralPath (Join-Path $root 'node_modules\@azure\identity'))) {
+        & npm ci --no-fund --no-audit
+        if ($LASTEXITCODE -ne 0) { throw 'Unable to install locked application dependencies.' }
+    }
     if ($Manual) {
         . (Join-Path $root 'infra\deploy-manual.ps1')
         $outputs = Invoke-ManualDeployment -Settings $settings -SubscriptionId $SubscriptionId -Root $root
@@ -48,6 +55,7 @@ try {
         }
     }
     Write-DemoIds -Root $root -Outputs $outputs
+    Complete-WorkbenchIdentity -Settings $settings -AppUrl $outputs.SERVICE_APP_ENDPOINT_URL
     Initialize-ContentUnderstanding -Root $root -Settings $settings -Outputs $outputs
     $health = Invoke-RestMethod -Uri "$($outputs.SERVICE_APP_ENDPOINT_URL)/health" -TimeoutSec 30
     if ($health.status -ne 'ok') { throw 'Application health check did not return status=ok.' }

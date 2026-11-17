@@ -127,10 +127,10 @@ An overall weighted rating remains undecided. The UI shows counts; do not report
 
 | Check | Observed result | Evidence boundary |
 |---|---|---|
-| Node automated tests | **47 / 47 passed**, including ten new Content Understanding tests | Cloud requests are mocked; includes actual restricted-text PDF preflight before an extraction request. |
-| Microsoft Edge automated browser suite | **10 / 10 passed**, including missing-unit correction | Real local server/browser rehearsal; identity-provider protocol is mocked, not a live tenant. |
-| Python documentation tests | **3 / 3 passed** | Strict documentation checks, fresh diagram PNGs and shipped/embedded icon consistency. |
-| Tiny synthetic evaluation | **23 / 23 passed**, `fixtureOnly=true`, rerun November 17 | Actual tiny-fixture snapshot below; not representative-corpus quality. |
+| Node automated tests | **66 / 66 passed** in the final integration run: previous 47 plus 19 default/bootstrap/identity cases | Cloud/directory requests are mocked; includes actual restricted-text PDF preflight before an extraction request. No live Azure, Graph or OAuth evidence. |
+| Microsoft Edge automated browser suite | **10 / 10 passed** earlier November 17, including missing-unit correction; not rerun for this revision | Real local server/browser rehearsal against unchanged application code; identity-provider protocol is mocked, not a live tenant. |
+| Python documentation tests | **3 / 3 passed** earlier November 17; not rerun for this revision | Earlier strict documentation checks, diagram freshness and shipped/embedded icon consistency; see the separate current documentation-check result below. |
+| Tiny synthetic evaluation | **23 / 23 passed**, `fixtureOnly=true`, earlier November 17; not rerun for this revision | Actual tiny-fixture snapshot below against unchanged application code; not representative-corpus quality. |
 | Documentation checks | **Zero errors/warnings** | Documentation structure, local links/anchors and visual requirements; not application/cloud validation. |
 | UI screenshots | Both existing images recaptured November 17 with `CAPTURE_EVIDENCE=1` and visually reviewed | Local synthetic visible state only; no live Content Understanding or Responses call. |
 
@@ -158,6 +158,18 @@ Confidence labels in local extraction are deterministic signals: known parse = 1
 | Responses | Provider error, invalid schema, unknown evidence ID, unsupported numeric claim, empty answer | Structured output is a shape constraint, not truth validation. |
 | Cosmos | Stale ETag, serialized-state bound, restart/reload, conflict response | Avoid silent lost updates and item-size surprises. |
 | Credentials | Wrong local tenant/subscription before live token acquisition | A correct endpoint does not fix a credential minted for the wrong target. |
+
+### Default-cloud bootstrap verification boundary
+
+| Boundary | Focused static/mock expectation | Still requires live validation |
+|---|---|---|
+| Defaults and orchestration | Both AI switches default `true`; preup/bootstrap persists explicit target and identity before parameter resolution; preprovision remains validation-only | First-time `azd up`, actual directory policy and deployment ordering. |
+| Directory identity | API/SPA apps, service principals, API scope/app roles and scoped SPA preauthorization; only current operator receives demo `manager` | Actual tenant Graph permissions, token claims, sign-in and role-negative checks using separately assigned test users. |
+| Reuse and safety | Same-target previously auto-created managed apps reused; unowned lookalikes rejected; externally managed apps require automation opt-out and manual callback/roles | Ownership/consent policy in the selected tenant; opt-out does not mutate directory identity; no privilege escalation or tenant-wide consent. |
+| Callback and analyzer | Exact callback is merged without deleting existing URIs; missing CU mappings/analyzer initialized, conflicts rejected | Actual callback round trip, role propagation, model availability/quota and genuinely grounded extraction. |
+| Cleanup | Azure deletion does not imply directory cleanup; explicit app/SP cleanup documented | Operator verifies and removes only disposable demo-owned identity after reviewing dependants. |
+
+The 19 new default/bootstrap/identity cases are included in the 66-test Node result above, not an additional test total. The table separates static/mock expectations from still-required live evidence. Default-on provisioning does not enable cloud calls in local rehearsal. No live Entra, Graph, OAuth, Azure deployment, quota reservation or model-provider validation was performed for this revision.
 
 API contracts were checked against [Content Understanding Analyze](https://learn.microsoft.com/en-us/rest/api/contentunderstanding/content-analyzers/analyze?view=rest-contentunderstanding-2025-11-01), [custom analyzers](https://learn.microsoft.com/en-us/azure/ai-services/content-understanding/concepts/analyzer-reference), [Responses](https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/responses) and [structured outputs](https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/structured-outputs). These references do not substitute for live tests.
 

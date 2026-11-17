@@ -17,7 +17,7 @@
         <mxCell id="c4" value="Tell a reproducible evidence story without presenting deterministic rehearsal as a live model." style="text;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=16;fontColor=#605E5C;html=1;fontFamily=Segoe UI;" vertex="1" parent="1">
           <mxGeometry x="40" y="100" width="1520" height="40" as="geometry" />
         </mxCell>
-        <mxCell id="c5" value="Legend: DEFAULT = reproducible local path | OPT-IN = Azure capability | GATE = human or policy decision" style="text;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=13;fontColor=#605E5C;html=1;fontFamily=Segoe UI;" vertex="1" parent="1">
+        <mxCell id="c5" value="Legend: DEFAULT = included in the selected local/cloud path | OPT-IN = explicit test | GATE = human or policy decision" style="text;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=13;fontColor=#605E5C;html=1;fontFamily=Segoe UI;" vertex="1" parent="1">
           <mxGeometry x="40" y="830" width="1520" height="30" as="geometry" />
         </mxCell>
         <mxCell id="c6" value="Scorecard Intelligence Workbench | 2026-11-17 | Icons: Microsoft Azure V24 + Entra + official Content Understanding artwork" style="text;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=11;fontColor=#605E5C;html=1;fontFamily=Segoe UI;" vertex="1" parent="1">

@@ -76,10 +76,10 @@ In another terminal, run `npm run test:browser` for the scripted browser proof. 
 | Say | Show | Avoid |
 |---|---|---|
 | “This is a local synthetic proof with real file extraction and deterministic answers.” | Session role and provider labels. | “The model has read everything” when no model was called. |
-| “The optional Azure path is documented separately.” | Architecture mode comparison. | Implying provisioning has been performed. |
+| “The Azure deployment includes extraction and Responses by default; this local rehearsal does not call either.” | Architecture mode comparison. | Implying provisioning has been performed. |
 | “We are testing traceability and controlled decisions.” | Source → record → rules → approval → history. | Unsupported accuracy percentages. |
 
-Explain that local roles are server-issued synthetic sessions and only valid on loopback. Hosted access instead uses Sign in with Microsoft through the configured public SPA authorization-code/PKCE flow. The API independently validates the v2 token, tenant/audience, delegated scope and app role. The callback must be registered exactly, consent and API enterprise-app role assignments must exist, and a reload requires sign-in again because the access token stays in memory. This is a bounded POC helper, not a claim of live tenant validation or production identity hardening.
+Explain that local roles are server-issued synthetic sessions and only valid on loopback. Hosted access instead uses Sign in with Microsoft through the configured public SPA authorization-code/PKCE flow. The API independently validates the v2 token, tenant/audience, delegated scope and app role. Default bootstrap creates or reuses same-target owned managed API/SPA identities and service principals, preauthorizes the SPA for this API and grants only the current operator the demo manager role—not a directory role. Postprovision merges the exact callback while preserving existing URIs. External identity requires automation opt-out and manual callback/roles. Directory policy/permissions still apply; a reload requires sign-in again because the access token stays in memory. This is a bounded POC helper, not a claim of live tenant validation or production identity hardening.
 
 ## Beat 2 — Follow a real source
 
@@ -150,7 +150,7 @@ The screenshot capture recipe is `CAPTURE_EVIDENCE=1` followed by the browser te
 
 [![Local synthetic review with independent source rating, baseline and annual rule](./assets/evidence/workbench-review.png)](./assets/evidence/workbench-review.png)
 
-The November 17 Edge suite passed **10 / 10** browser tests using local synthetic inputs and mocked OAuth, including missing-unit correction. The integrated Node suite passed **47 / 47** and Python documentation checks **3 / 3**; cloud service requests remain mocked. The review capture includes a deliberate **synthetic demonstration override**, not a new source value: use it to explain correction and approval invalidation while pointing to the preserved original source value. Show the editable unit, available source-confidence/span/geometry details, independent source rating, synthetic baseline provenance and reported-YTD annual explanation separately. Neither image establishes live Entra sign-in, scan OCR or model quality.
+The final November 17 integrated Node suite passed **66 / 66** tests (previous 47 plus 19 default/bootstrap/identity cases); cloud and directory requests remain mocked. Earlier November 17 runs passed **10 / 10** Edge browser tests using local synthetic inputs and mocked OAuth, **3 / 3** Python documentation checks and **23 / 23** tiny-fixture evaluation checks. Those three suites were not rerun for this revision; application code is unchanged. The review capture includes a deliberate **synthetic demonstration override**, not a new source value: use it to explain correction and approval invalidation while pointing to the preserved original source value. Show the editable unit, available source-confidence/span/geometry details, independent source rating, synthetic baseline provenance and reported-YTD annual explanation separately. Neither image establishes live Azure, Graph, OAuth, scan OCR or model quality.
 
 ## Close with an honest decision
 

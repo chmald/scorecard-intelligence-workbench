@@ -22,6 +22,7 @@ const validEnvironment = {
   ENTRA_AUDIENCE: '33333333-3333-3333-3333-333333333333', AZURE_RESOURCE_GROUP: '',
   ENTRA_CLIENT_ID: '44444444-4444-4444-4444-444444444444',
   ENTRA_API_SCOPE: 'api://33333333-3333-3333-3333-333333333333/access_as_user',
+  CONTENT_UNDERSTANDING_SETUP_PRINCIPAL_ID: '', CONTENT_UNDERSTANDING_SETUP_PRINCIPAL_TYPE: '',
   DEPLOY_OPENAI: 'false', DEPLOY_CONTENT_UNDERSTANDING: 'false',
   AZURE_OPENAI_MODEL_NAME: '', AZURE_OPENAI_MODEL_VERSION: '',
   AZURE_OPENAI_DEPLOYMENT: '', AZURE_OPENAI_DEPLOYMENT_SKU: '',
@@ -73,7 +74,7 @@ test('cloud state and authorization are managed-identity backed and never local-
 });
 
 test('Content Understanding uses a dedicated keyless AI Services account and two explicit model deployments', () => {
-  assert.match(main, /param deployContentUnderstanding bool = false/);
+  assert.match(main, /param deployContentUnderstanding bool = true/);
   assert.match(main, /param contentUnderstandingAnalyzerId string = 'document_metrics'/);
   assert.match(main, /resource contentUnderstanding 'Microsoft\.CognitiveServices\/accounts@2026-09-01' = if \(deployContentUnderstanding\)/);
   assert.match(main, /kind: 'AIServices'/);
@@ -91,7 +92,7 @@ test('Content Understanding uses a dedicated keyless AI Services account and two
   assert.doesNotMatch(main, /contentUnderstanding\/analyzers|accounts\/analyzers/);
 });
 
-test('bad names, missing targets/audience and unspecified live model choices fail before Azure', () => {
+test('bad names, missing targets/audience and malformed settings fail before Azure', () => {
   const cases = [
     { AZURE_ENV_NAME: 'Invalid-Name' },
     { AZURE_TENANT_ID: '' },
@@ -103,7 +104,6 @@ test('bad names, missing targets/audience and unspecified live model choices fai
     { ENTRA_API_SCOPE: '' },
     { ENTRA_API_SCOPE: 'https://graph.microsoft.com/User.Read' },
     { ENTRA_API_SCOPE: 'api://different-api/access_as_user' },
-    { DEPLOY_OPENAI: 'true' },
     { DEPLOY_OPENAI: 'not-a-bool' },
     { COSMOS_THROUGHPUT: '401' },
   ];
@@ -117,15 +117,16 @@ test('bad names, missing targets/audience and unspecified live model choices fai
   }
 });
 
-test('Content Understanding requires explicit model selections and setup identity before any Azure operation', () => {
+test('Content Understanding validates model pairs and setup identity before any Azure operation', () => {
   const overrides = [
     { DEPLOY_CONTENT_UNDERSTANDING: 'invalid' },
-    ...Object.keys(contentEnvironment).filter((name) => /MODEL|DEPLOYMENT|PRINCIPAL_ID/.test(name)).map((name) => ({ [name]: '' })),
+    { AZURE_PRINCIPAL_ID: '' },
     { AZURE_PRINCIPAL_ID: '00000000-0000-0000-0000-000000000000' },
     { AZURE_PRINCIPAL_TYPE: 'Owner' },
     { CONTENT_UNDERSTANDING_COMPLETION_CAPACITY: '0' },
     { CONTENT_UNDERSTANDING_EMBEDDING_CAPACITY: '-1' },
     { CONTENT_UNDERSTANDING_ANALYZER_ID: 'invalid/id' },
+    { CONTENT_UNDERSTANDING_COMPLETION_DEPLOYMENT: 'invalid/deployment' },
     { CONTENT_UNDERSTANDING_EMBEDDING_DEPLOYMENT: 'operator-completion' },
     { CONTENT_UNDERSTANDING_EMBEDDING_MODEL: 'operator-completion-model' },
   ];
@@ -145,6 +146,41 @@ test('Content Understanding requires explicit model selections and setup identit
         $settings.contentUnderstandingSetupPrincipalId -ne $env:AZURE_PRINCIPAL_ID) { throw 'Content Understanding configuration changed' }
   `, { ...validEnvironment, ...contentEnvironment });
   assert.equal(result.status, 0, result.stderr);
+});
+
+test('default cloud settings enable complete extraction and answers without manual model choices', () => {
+  const overrides = Object.fromEntries(Object.keys(contentEnvironment).map((name) => [name, '']));
+  const result = pwsh(`${sourceCommon}
+    $settings = Get-DeploymentSettings
+    Assert-DeploymentConfiguration $settings
+    if (-not $settings.deployContentUnderstanding -or -not $settings.deployOpenAI) { throw 'Default cloud deployment is incomplete' }
+    $settings | ConvertTo-Json -Compress
+  `, { ...validEnvironment, ...overrides, DEPLOY_OPENAI: '',
+    AZURE_PRINCIPAL_ID: '55555555-5555-5555-5555-555555555555' });
+  assert.equal(result.status, 0, result.stderr);
+  const settings = JSON.parse(result.stdout);
+  for (const [name, value] of Object.entries(settings)) {
+    if (!/^(?:contentUnderstanding|openAI).*(?:ModelName|ModelVersion|DeploymentName|DeploymentSku|Capacity)$/.test(name)) continue;
+    const literal = typeof value === 'string' ? `'${value}'` : String(value);
+    for (const template of [main, wrapper]) {
+      assert.ok(template.includes(`param ${name} ${typeof value === 'string' ? 'string' : 'int'} = ${literal}`),
+        `${name} differs between script and Bicep`);
+    }
+    assert.ok(parameters[name].value.endsWith(`=${value}}`), `${name} differs in azd substitution`);
+  }
+});
+
+test('Content Understanding setup caller is independent of azd reserved current-principal substitutions', () => {
+  const result = pwsh(`${sourceCommon}
+    $settings = Get-DeploymentSettings
+    Assert-DeploymentConfiguration $settings
+    if ($settings.contentUnderstandingSetupPrincipalId -ne '66666666-6666-6666-6666-666666666666' -or
+        $settings.contentUnderstandingSetupPrincipalType -ne 'ServicePrincipal') { throw 'Explicit setup caller was replaced' }
+  `, { ...validEnvironment, ...contentEnvironment,
+    CONTENT_UNDERSTANDING_SETUP_PRINCIPAL_ID: '66666666-6666-6666-6666-666666666666',
+    CONTENT_UNDERSTANDING_SETUP_PRINCIPAL_TYPE: 'ServicePrincipal' });
+  assert.equal(result.status, 0, result.stderr);
+  assert.equal(parameters.contentUnderstandingSetupPrincipalId.value, '${CONTENT_UNDERSTANDING_SETUP_PRINCIPAL_ID=}');
 });
 
 test('explicit live model settings survive validation without being silently rewritten', () => {
@@ -333,7 +369,8 @@ test('imperative deployment preserves model choices and returns the same output 
 });
 
 test('all deployment hooks and entry points parse as PowerShell', () => {
-  const scripts = ['infra/hooks/common.ps1', 'infra/hooks/preprovision.ps1', 'infra/hooks/postprovision.ps1',
+  const scripts = ['infra/hooks/common.ps1', 'infra/hooks/bootstrap.ps1', 'infra/hooks/preup.ps1',
+    'infra/hooks/identity.ps1', 'infra/hooks/preprovision.ps1', 'infra/hooks/postprovision.ps1',
     'infra/deploy-manual.ps1', 'scripts/deploy.ps1', 'scripts/start-local.ps1'];
   const result = pwsh(`
     foreach ($path in @(${scripts.map((path) => psQuote(resolve(root, path))).join(',')})) {
@@ -387,7 +424,9 @@ test('every infrastructure setting/output and hook environment variable is docum
   for (const { value } of Object.values(parameters)) names.add(value.match(/^\$\{([^=}]+)/)[1]);
   for (const [, name] of wrapper.matchAll(/^output (\w+) /gm)) names.add(name);
   for (const [, name] of main.matchAll(/name: '([A-Z][A-Z0-9_]+)'/g)) names.add(name);
-  for (const [, name] of read('infra/hooks/common.ps1').matchAll(/Get-(?:Boolean)?Setting '([A-Z][A-Z0-9_]+)'/g)) names.add(name);
+  for (const path of readdirSync(resolve(root, 'infra/hooks')).filter((name) => name.endsWith('.ps1'))) {
+    for (const [, name] of read(join('infra/hooks', path)).matchAll(/(?:Get-(?:Boolean)?Setting|Read-DeploymentSetting) '([A-Z][A-Z0-9_]+)'/g)) names.add(name);
+  }
   for (const path of ['scripts/deploy.ps1', 'scripts/start-local.ps1']) {
     for (const [, name] of read(path).matchAll(/\$env:([A-Z][A-Z0-9_]+)/g)) names.add(name);
   }

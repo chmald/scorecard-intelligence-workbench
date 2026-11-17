@@ -10,9 +10,9 @@
 <img src="./assets/icons/cosmos-db.svg" width="40" alt="Azure Cosmos DB"/>
 </p>
 
-![Synthetic](./assets/badges/synthetic.svg) ![Optional cloud](./assets/badges/opt-in.svg) ![Cloud static only](./assets/badges/static-only.svg)
+![Synthetic](./assets/badges/synthetic.svg) ![Cloud defaults](./assets/badges/default.svg) ![Cloud static only](./assets/badges/static-only.svg)
 
-This reference describes a bounded, single-workbench application for evidence-led review of periodic measurements. It is for implementers and reviewers who need to distinguish deterministic business decisions, human authority and optional model assistance. The design prioritizes inspectable sources and denial behavior over an impressive but unverifiable answer.
+This reference describes a bounded, single-workbench application for evidence-led review of periodic measurements. It is for implementers and reviewers who need to distinguish deterministic business decisions, human authority and default cloud model assistance. Local rehearsal remains deterministic and local. The design prioritizes inspectable sources and denial behavior over an impressive but unverifiable answer.
 
 ## At a glance
 
@@ -32,9 +32,9 @@ This reference describes a bounded, single-workbench application for evidence-le
 | Tier | Component | Responsibility |
 |---|---|---|
 | Source | <img src="./assets/icons/file.svg" width="24" alt="Files"/> Uploaded/generated files | Actual PDF/XLSX/CSV/TXT/JSON bytes, scoped to one entity and period. |
-| Ingestion | <img src="./assets/icons/content-understanding.svg" width="24" alt="Azure Content Understanding"/> Local parsers / optional custom analyzer | Structured files parse directly; cloud schema fields carry confidence and source grounding for review. |
+| Ingestion | <img src="./assets/icons/content-understanding.svg" width="24" alt="Azure Content Understanding"/> Local parsers / default cloud custom analyzer | Structured files parse directly; cloud schema fields carry confidence and source grounding for review. |
 | Platform | <img src="./assets/icons/container-apps.svg" width="24" alt="Runtime"/> Node server / Container Apps | Request validation, normalized records, state transitions and APIs. |
-| Intelligence | <img src="./assets/icons/azure-openai.svg" width="24" alt="Answers"/> Deterministic renderer / optional Responses | Explain only authorized evidence; reject unsupported claims. |
+| Intelligence | <img src="./assets/icons/azure-openai.svg" width="24" alt="Answers"/> Local deterministic renderer / default cloud Responses | Explain only authorized evidence; reject unsupported claims. |
 | Interaction | <img src="./assets/icons/users.svg" width="24" alt="Users"/> Browser | Evidence review, confirmation, approval and history inspection. |
 | State | <img src="./assets/icons/cosmos-db.svg" width="24" alt="Persistence"/> Atomic JSON / Cosmos DB | Persist workflow and frozen snapshots; optimistic conflict checks. |
 | Identity | <img src="./assets/icons/managed-identity.svg" width="24" alt="Managed identity"/> Entra / user-assigned identity | User JWT validation and passwordless cloud service access. |
@@ -48,8 +48,8 @@ This reference describes a bounded, single-workbench application for evidence-le
 | Build | Azure Container Registry remote build | No local Docker daemon required by the cloud fast path. | Enterprise build policy may mandate an approved build agent. |
 | Local state | Atomic JSON, trusted single process | Restart-persistent rehearsal without a database installation. | Never use this for multi-instance/cloud state. |
 | Cloud state | Cosmos DB for NoSQL, ETag conflicts | Managed identity and explicit concurrency protection. | Large source documents need external object storage. |
-| Extraction | Local real text/cell parsers; Content Understanding custom schema opt-in | Varied layouts need semantic field extraction, not merely text/layout output; local rehearsal stays reproducible. | New source variants require annotated field/grounding tests and human review. |
-| Answers | Deterministic local; Responses opt-in | Repeatability before model variability or spend. | New deployment requires structured-output and abstention tests. |
+| Extraction | Local real text/cell parsers; Content Understanding custom schema on by default in Azure | Varied layouts need semantic field extraction, not merely text/layout output; local rehearsal stays reproducible. | New source variants require annotated field/grounding tests and human review. |
+| Answers | Deterministic local; Responses on by default in Azure | Repeatable local tests remain independent of model variability and cloud spend. | New deployment requires structured-output and abstention tests. |
 | Status | Configured ordered thresholds and rules version | Numeric classification must be reproducible. | Rules change needs a new version, not retroactive history edits. |
 | Publication | Human confirmation, manager approval, immutable snapshot | A generated suggestion is not an authorized decision. | Changes require a new review period/version, not mutation. |
 | Identity | Server-validated Entra JWT in Azure | Browser flags and local role selection are not credentials. | Production login flow requires a separately reviewed client. |
@@ -71,7 +71,7 @@ Cosmos data-plane roles are separate from management roles ([Microsoft Learn](ht
 | Extraction disclosure | Local parsing does not send files to a service | Content Understanding processes the entire submitted source with models | Whole-document authorization is a separate gate from answer-record filtering. |
 
 > [!WARNING]
-> Hosted sign-in requires two existing single-tenant app registrations: a public SPA client and this API. Configure the exact SPA callback, delegated scope, consent and API app-role assignments. The native PKCE helper is a bounded POC, not a production identity-library substitute or a claim of live tenant validation.
+> Hosted sign-in uses two single-tenant app registrations: a public SPA client and this API. The default bootstrap creates them, the API scope/roles and service principals, preauthorizes the SPA for this API and grants only the current operator `manager`. Previously auto-created managed apps for the same tenant/subscription/environment are reused; externally managed apps require `AUTO_CONFIGURE_ENTRA=false` and operator-maintained callback/roles. Automatic postprovision merges the exact SPA callback, preserving existing URIs, only on the owned managed SPA. Directory permissions and tenant policy still apply. The native PKCE helper is a bounded POC, not a production identity-library substitute or a claim of live tenant validation.
 
 ## Request and evidence flow
 
@@ -149,7 +149,7 @@ Known restricted uploads or locally detectable restricted text are rejected befo
 | Content Understanding extraction | ![GA API](./assets/badges/ga.svg) Custom document analyzer using `2025-11-01`, an explicit field schema, confidence and source grounding | Validate typed fields and grounding; bounded polling/errors, no fabricated success or silent local fallback. |
 | Responses | `POST /openai/v1/responses`, configured deployment; structured schema under `text.format` | Validate response shape, authorized evidence IDs and numeric support; otherwise abstain/fail explicitly. |
 
-Content Understanding uses a [custom analyzer](https://learn.microsoft.com/en-us/azure/ai-services/content-understanding/concepts/analyzer-reference), not a layout-only rename. [Confidence and grounding](https://learn.microsoft.com/en-us/azure/ai-services/content-understanding/document/analyzer-improvement) are review signals, not numerical-correctness guarantees. Response formatting for explanations follows [structured outputs](https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/structured-outputs). No model name or version is pinned by this reference; configure verified supported model deployments and defaults before analyzer creation. Preview agentic analysis is outside this baseline.
+Content Understanding uses a [custom analyzer](https://learn.microsoft.com/en-us/azure/ai-services/content-understanding/concepts/analyzer-reference), not a layout-only rename. [Confidence and grounding](https://learn.microsoft.com/en-us/azure/ai-services/content-understanding/document/analyzer-improvement) are review signals, not numerical-correctness guarantees. Response formatting for explanations follows [structured outputs](https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/structured-outputs). Cloud bootstrap supplies configurable verified model/deployment defaults, listed with lifecycle/region caveats in [configuration](./08-configuration-reference.md#platform-and-default-ai-deployment-inputs); setup creates the analyzer after resource/model provisioning. Preview agentic analysis is outside this baseline.
 
 | Source class | Implemented extensions | Local extraction provider | Azure extraction provider |
 |---|---|---|---|
@@ -205,7 +205,7 @@ Only the `domain` block in your ignored local configuration contains example-wor
 | Chart-only numeric interpretation | Schema-based model extraction does not guarantee correct chart semantics or numbers. | Dedicated chart evaluation, grounded field validation and human review. |
 | High-volume documents | State and source-byte envelope is intentionally bounded. | Blob storage, async jobs, retention, scanning and load tests. |
 | Production isolation and recovery | One workbench is not an enterprise tenancy model. | Data partitioning, backup/restore and threat review. |
-| Cloud validation | No live deployment is asserted. | Role-negative tests, restart persistence and opt-in provider results. |
+| Cloud validation | No live deployment is asserted. | Role-negative tests, restart persistence and default cloud-provider results. |
 
 Next: [Prerequisites](./02-prerequisites.md).
 

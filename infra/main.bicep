@@ -24,19 +24,19 @@ param cosmosThroughput int = 400
 @minValue(30)
 @maxValue(730)
 param logRetentionDays int = 30
-param deployContentUnderstanding bool = false
+param deployContentUnderstanding bool = true
 param contentUnderstandingLocation string = ''
 param contentUnderstandingAnalyzerId string = 'document_metrics'
-param contentUnderstandingCompletionModelName string = ''
-param contentUnderstandingCompletionModelVersion string = ''
-param contentUnderstandingCompletionDeploymentName string = ''
-param contentUnderstandingCompletionDeploymentSku string = ''
+param contentUnderstandingCompletionModelName string = 'gpt-5.2'
+param contentUnderstandingCompletionModelVersion string = '2025-12-11'
+param contentUnderstandingCompletionDeploymentName string = 'document-completion'
+param contentUnderstandingCompletionDeploymentSku string = 'GlobalStandard'
 @minValue(1)
 param contentUnderstandingCompletionCapacity int = 1
-param contentUnderstandingEmbeddingModelName string = ''
-param contentUnderstandingEmbeddingModelVersion string = ''
-param contentUnderstandingEmbeddingDeploymentName string = ''
-param contentUnderstandingEmbeddingDeploymentSku string = ''
+param contentUnderstandingEmbeddingModelName string = 'text-embedding-3-large'
+param contentUnderstandingEmbeddingModelVersion string = '1'
+param contentUnderstandingEmbeddingDeploymentName string = 'document-embedding'
+param contentUnderstandingEmbeddingDeploymentSku string = 'GlobalStandard'
 @minValue(1)
 param contentUnderstandingEmbeddingCapacity int = 1
 param contentUnderstandingSetupPrincipalId string = ''
@@ -46,12 +46,12 @@ param contentUnderstandingSetupPrincipalId string = ''
   'Group'
 ])
 param contentUnderstandingSetupPrincipalType string = 'User'
-param deployOpenAI bool = false
+param deployOpenAI bool = true
 param openAILocation string = ''
-param openAIModelName string = ''
-param openAIModelVersion string = ''
-param openAIDeploymentName string = ''
-param openAIDeploymentSku string = ''
+param openAIModelName string = 'gpt-5.2'
+param openAIModelVersion string = '2025-12-11'
+param openAIDeploymentName string = 'answers'
+param openAIDeploymentSku string = 'GlobalStandard'
 @minValue(1)
 param openAICapacity int = 1
 

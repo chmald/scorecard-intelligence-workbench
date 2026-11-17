@@ -9,7 +9,7 @@
 <img src="./assets/icons/managed-identity.svg" width="40" alt="Managed identity"/>
 </p>
 
-![azd up](./assets/badges/azd-up.svg) ![Cloud static only](./assets/badges/static-only.svg) ![Opt-in](./assets/badges/opt-in.svg)
+![azd up](./assets/badges/azd-up.svg) ![Cloud static only](./assets/badges/static-only.svg) ![Cloud defaults](./assets/badges/default.svg)
 
 This is the operator runbook for deploying the workbench to an explicitly approved Azure tenant and subscription. The Azure Developer CLI wrapper and PowerShell entry point use the same Bicep resources. If policy prohibits templates, use the [manual Portal and imperative alternative](./03b-manual-deployment.md). No Azure resources were provisioned or authenticated while authoring this reference.
 
@@ -18,15 +18,24 @@ This is the operator runbook for deploying the workbench to an explicitly approv
 > [!WARNING]
 > **Phase 0 — Authenticate to the right tenant.** Azure CLI and Azure Developer CLI maintain separate logins. Supply real approved target values below, verify both contexts, and never rely on the last account used elsewhere.
 
+For a fresh checkout with the [prerequisites](./02-prerequisites.md) satisfied, run:
+
+```powershell
+azd up
+```
+
+azd asks for an environment name if needed. The preup bootstrap prompts only for missing explicit tenant/subscription/region settings, uses `swedencentral` as the configurable default region, verifies the intended Azure CLI and azd tenants and logs into the correct target when required. It persists validated settings and identity IDs **before** template parameter resolution. There is no separate app-registration, model-deployment or callback command afterward. Confirm the displayed target; never accept an ambient account as evidence of intent.
+
+This ordering is supported by azd's implementation: [command-hook middleware](https://github.com/Azure/azure-dev/blob/main/cli/azd/cmd/middleware/hooks.go) wraps the action with hooks, and [`RunHooks`](https://github.com/Azure/azure-dev/blob/main/cli/azd/pkg/ext/hooks_runner.go) reloads the environment before and after each hook. Consequently, `ENTRA_*` values persisted by preup are available before Bicep parameter substitution; this source inspection is not live-deployment evidence.
+
+The expanded equivalent below is useful when you want to set every target input before the single deployment command:
+
 <details><summary><b>Tenant-explicit fast path — run only after prerequisites are met</b></summary>
 
 ```powershell
 $TenantId = '<approved-tenant-id>'
 $SubscriptionId = '<approved-subscription-id>'
-$Location = '<approved-region>'
-$Audience = '<existing-api-application-client-id-guid>'
-$SpaClientId = '<existing-public-spa-client-id-guid>'
-$ApiScope = 'api://<existing-api-application-client-id-guid>/access_as_user'
+$Location = 'swedencentral' # Default; override only with an approved compatible region.
 $EnvironmentName = 'workbench01'
 
 az login --tenant $TenantId
@@ -38,18 +47,27 @@ azd env new $EnvironmentName
 azd env set AZURE_TENANT_ID $TenantId
 azd env set AZURE_SUBSCRIPTION_ID $SubscriptionId
 azd env set AZURE_LOCATION $Location
-azd env set ENTRA_AUDIENCE $Audience
-azd env set ENTRA_CLIENT_ID $SpaClientId
-azd env set ENTRA_API_SCOPE $ApiScope
-azd env set DEPLOY_CONTENT_UNDERSTANDING false
-azd env set DEPLOY_OPENAI false
 azd env get-values
-azd provision --preview
-# Review the resource plan and role assignments before the write:
+# One command bootstraps identity, provisions all default resources,
+# configures the analyzer/callback, and builds/deploys the application:
 azd up
 ```
 
-Environment names are 3–16 lowercase letters/digits, beginning with a letter. Choose a fresh environment for a fresh deployment. A denied target, missing audience/client/scope or mismatched context is a stop condition—not a reason to bypass the hook.
+Environment names are 3–16 lowercase letters/digits, beginning with a letter. Choose a fresh environment for a fresh deployment. A denied target, missing directory permissions, unavailable model quota or mismatched context is a stop condition—not a reason to bypass a hook.
+
+Both `DEPLOY_CONTENT_UNDERSTANDING` and `DEPLOY_OPENAI` default to `true` for cloud provisioning. The bootstrap creates the single-tenant API and public SPA registrations, API scope/app roles and service principals, grants only the current operator the demo's `manager` role, and persists the resulting public IDs. Previously auto-created managed apps for the same tenant/subscription/environment are reused. Externally managed apps require `AUTO_CONFIGURE_ENTRA=false` and manual callback/role maintenance. Automatic postprovision adds the exact hosted callback only on the owned managed SPA without removing existing URIs, initializes missing model mappings and the domain analyzer, and writes ignored local outputs. Directory permissions, tenant consent policy, Azure role-assignment authority and model availability/quota remain prerequisites.
+
+The local rehearsal command is unchanged: it forces local identity, JSON state and deterministic providers. Deploying resources never authorizes local cloud processing. For a deliberately reduced cloud deployment, explicitly opt out before `azd up`; do not present that reduced environment as the complete default demo.
+
+Existing azd environments retain explicit settings, including an earlier `false`. To migrate an older environment to the complete default footprint, select and verify that environment/target, then run:
+
+```powershell
+azd env set DEPLOY_CONTENT_UNDERSTANDING true
+azd env set DEPLOY_OPENAI true
+azd up
+```
+
+In non-interactive automation, `AZD_NON_INTERACTIVE=true` or `CI=true` prevents target/login prompts. Supply the intended tenant/subscription/environment and approved region/authentication in advance; a missing target or login fails rather than falling back to ambient credentials.
 
 </details>
 
@@ -72,14 +90,18 @@ The project definition follows the public [azure.yaml schema](https://learn.micr
 
 | Step | | Action | Gate |
 |---|---|---|---|
-| **1.1** | <img src="./assets/icons/app-registrations.svg" width="24" alt="Registration"/> | Configure the API and separate public SPA registrations below | The browser can obtain a v2 access token carrying the expected scope and API app role. |
+| **1.1** | <img src="./assets/icons/app-registrations.svg" width="24" alt="Registration"/> | Allow bootstrap to create/reuse same-target managed API/SPA identity, or opt out for an externally managed pair | Only the current operator receives the demo manager role automatically; additional users require deliberate assignment. |
 | **1.2** | <img src="./assets/icons/file.svg" width="24" alt="Configuration"/> | Review the template's `domain` block before image build | Only synthetic example content is packaged. |
-| **1.3** | <img src="./assets/icons/gear.svg" width="24" alt="Settings"/> | Review [all settings](./08-configuration-reference.md) | Location, database and optional AI parameters are intentional. |
+| **1.3** | <img src="./assets/icons/gear.svg" width="24" alt="Settings"/> | Review [all settings](./08-configuration-reference.md) | Location, database and default-on AI costs/model settings are intentional. |
 | **1.4** | <img src="./assets/icons/code.svg" width="24" alt="Tests"/> | Run `npm ci`, `npm test`, `npm run evaluate` | Baseline local tests pass before spending on Azure. |
 
 For local customization, `demo-ids.local.json` overrides the template. The ignored local file is not sent in the container build. To customize the hosted domain, apply the reviewed generic `domain` configuration to the build template before building; do not add real IDs, credentials or organizational source content to it.
 
-### Portal identity setup — required outside Bicep
+### Portal identity setup — reference for reuse and inspection
+
+These are the identity objects/settings the automatic bootstrap configures outside Bicep. They are **not mandatory manual steps** for a fresh `azd up`. Use this table to inspect generated identity, prepare a compatible existing pair, or perform a separately approved Portal-only deployment.
+
+`AUTO_CONFIGURE_ENTRA=true` is the default. Managed apps are identified by deterministic environment names and ownership tags; bootstrap must not adopt an unowned same-name application. To reuse a manually managed pair without directory mutation, set `AUTO_CONFIGURE_ENTRA=false` and supply `ENTRA_AUDIENCE`, `ENTRA_CLIENT_ID` and `ENTRA_API_SCOPE`; ensure the roles, preauthorization/consent and callback already satisfy the table below. That opt-out also leaves callback maintenance with the operator.
 
 | Step | Entra admin center action | Exact configuration / proof |
 |---|---|---|
@@ -87,11 +109,11 @@ For local customization, `demo-ids.local.json` overrides the template. The ignor
 | Delegated scope | API app → Expose an API → set Application ID URI and add a scope | For example, scope name `access_as_user` gives `api://<API-app-id>/access_as_user`; configure the full chosen value as `ENTRA_API_SCOPE`. Do not request Microsoft Graph for this API. |
 | API roles | API app → App roles → create enabled Users/Groups roles | Exact values `reviewer`, `manager`, `auditor`; assign the intended users/groups under the **API enterprise application**. A directory job title or scope consent does not grant a role. |
 | Public SPA client | Create/select a separate single-tenant client app → Authentication → Add a platform → Single-page application | No client secret. Its Application (client) ID becomes `ENTRA_CLIENT_ID`. Do not enable implicit-grant tokens for this code flow. |
-| Client permissions | SPA app → API permissions → My APIs → this API → Delegated permissions | Add the exposed scope and grant the consent required by your tenant's policy. Configure owners if the API is absent from My APIs. |
-| Callback after app provisioning | SPA app → Authentication → SPA redirect URIs | Add **exactly** `https://<deployed-app-host>/auth/callback`, using `appUrl` from the generated local outputs. Preserve scheme, host, port if any and path. |
+| Client permissions | SPA app → API permissions → My APIs → this API → Delegated permissions; API → Authorized client applications | Bootstrap configures the exposed API scope and scoped SPA preauthorization, not Microsoft Graph application grants or tenant-wide admin consent. A manually managed pair must meet tenant consent policy. |
+| Callback after app provisioning | SPA app → Authentication → SPA redirect URIs | Postprovision merges **exactly** `https://<deployed-app-host>/auth/callback`, using `appUrl`, while preserving existing URIs. Preserve scheme, host, port if any and path. With automation disabled, maintain it explicitly. |
 | Browser proof | Open hosted root → Sign in with Microsoft | Redirect to tenant-specific authorize endpoint and back to callback; `/api/session` succeeds only with the intended scope and role. |
 
-This follows the official [authorization-code/PKCE flow](https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-auth-code-flow), [API scope configuration](https://learn.microsoft.com/en-us/entra/identity-platform/quickstart-configure-app-expose-web-apis) and [app-role guidance](https://learn.microsoft.com/en-us/entra/identity-platform/howto-add-app-roles-in-apps). The redirect **platform type must be SPA** so the browser token exchange has the expected CORS behavior. Application registration and consent are operator steps; resource provisioning alone cannot complete them.
+This follows the official [authorization-code/PKCE flow](https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-auth-code-flow), [API scope configuration](https://learn.microsoft.com/en-us/entra/identity-platform/quickstart-configure-app-expose-web-apis) and [app-role guidance](https://learn.microsoft.com/en-us/entra/identity-platform/howto-add-app-roles-in-apps). The redirect **platform type must be SPA** so the browser token exchange has the expected CORS behavior. The bootstrap performs directory operations using the authenticated operator's existing authority; it cannot bypass tenant consent or application-management policy. See also the [azd hook lifecycle](https://learn.microsoft.com/en-us/azure/developer/azure-developer-cli/azd-extensibility).
 
 [![Browser PKCE and API authorization flow](./assets/browser-authentication-flow.png)](./assets/browser-authentication-flow.png)
 
@@ -112,15 +134,17 @@ The deployment guard currently supports the default API identifier form `api://<
 
 | Step | | Action | Proof |
 |---|---|---|---|
-| **2.1** | <img src="./assets/icons/powershell.svg" width="24" alt="Guard"/> | Run preprovision validation through `azd provision --preview` | ![Static only](./assets/badges/static-only.svg) Names, target, required settings and model prerequisites pass when run. |
+| **2.1** | <img src="./assets/icons/powershell.svg" width="24" alt="Guard"/> | Optionally run `azd provision --preview` on initialized settings | ![Static only](./assets/badges/static-only.svg) Strict configuration/context validation; preview does not create directory apps. A fresh environment uses preup via `azd up`, not preview as an identity bootstrap. |
 | **2.2** | <img src="./assets/icons/resource-group.svg" width="24" alt="Resource group"/> | Inspect the resource group plan | No unrelated resource is unexpectedly changed. |
-| **2.3** | <img src="./assets/icons/managed-identity.svg" width="24" alt="Identity"/> | Inspect roles and optional services | Registry/Cosmos roles; AI roles only when enabled. |
+| **2.3** | <img src="./assets/icons/managed-identity.svg" width="24" alt="Identity"/> | Inspect roles and AI services | Registry/Cosmos roles plus default-on extraction/setup and answer roles; explicit opt-outs remove the corresponding services. |
 | **2.4** | <img src="./assets/icons/container-apps.svg" width="24" alt="Deploy"/> | Run `azd up` | Provision, package/deploy and hooks complete. |
 
 | Hook / entry point | Responsibility | Failure means |
 |---|---|---|
+| `infra/hooks/preup.ps1` / `infra/hooks/bootstrap.ps1` | Resolve explicit target; verify/authenticate both CLIs; initialize default settings and identity; persist azd inputs | Stop on denied target/directory operations; never trust ambient tenant/subscription. |
+| `infra/hooks/identity.ps1` | `Initialize-WorkbenchIdentity` creates/reuses managed API/SPA identity; `Complete-WorkbenchIdentity` merges exact callback | Missing directory authority or ownership mismatch is not bypassed. |
 | `infra/hooks/preprovision.ps1` | Load validated settings and compare Azure CLI tenant/subscription | Stop; correct the explicit target. |
-| `infra/hooks/postprovision.ps1` | Persist outputs to ignored local reference file | Stop if required outputs or domain preservation fail. |
+| `infra/hooks/postprovision.ps1` | Persist ignored local outputs; merge exact SPA callback; configure CU defaults/analyzer | Stop on identity mismatch, denied directory access, conflicting analyzer/defaults or domain preservation failure. |
 | `infra/hooks/common.ps1` | Shared validation, context checks and safe local-ID write | Do not duplicate these rules in another deployment script. |
 | `azure.yaml` application service | Build/deploy the Node application image | A provisioned bootstrap container is not the workbench. |
 
@@ -128,7 +152,9 @@ The initial template image is a public bootstrap application. It must be replace
 
 - [ ] Resource names and outputs match the selected environment.
 - [ ] Local reference IDs are ignored by Git.
-- [ ] Optional AI resources were not created inadvertently.
+- [ ] Default-on extraction and Responses resources, deployments and roles match the approved budget.
+- [ ] API/SPA IDs are persisted; only the current operator received the automatic manager assignment.
+- [ ] Exact hosted callback exists and any pre-existing redirect URIs remain intact.
 
 ## Phase 3 — Validate deployed identity and state
 
@@ -169,26 +195,27 @@ Managed identity image-pull configuration follows [Container Apps guidance](http
 - [ ] Persistence survives restart.
 - [ ] No bearer tokens or document contents appear in logs.
 
-## Phase 4 — Enable extraction and answers independently
+## Phase 4 — Review default extraction and answers
 
 | Capability | Required settings | Additional proof |
 |---|---|---|
-| Content Understanding custom schema | `DEPLOY_CONTENT_UNDERSTANDING=true`; approved region; explicit completion/embedding model deployments and analyzer ID | Authorized whole document yields validated fields, confidence and source grounding; missing numeric grounding abstains. |
-| Responses | `DEPLOY_OPENAI=true`; explicit model/name/version/deployment/SKU/capacity | Model supports Responses structured output; unsupported claims abstain. |
+| Content Understanding custom schema | `DEPLOY_CONTENT_UNDERSTANDING=true` by default; approved region; configured completion/embedding deployments and analyzer ID | Authorized whole document yields validated fields, confidence and source grounding; missing numeric grounding abstains. |
+| Responses | `DEPLOY_OPENAI=true` by default; configured model/version/deployment/SKU/capacity | Model supports Responses structured output; unsupported claims abstain. |
 | Both | Both sets plus reviewed regions and budget | One provider failure cannot silently switch the other to a simulated path. |
 
 > [!IMPORTANT]
-> No model is selected for you. Verify current model availability, retirement, deployment SKU and structured-output support for your subscription. A resource account without a compatible model deployment is not a working answer provider.
+> Cloud provisioning supplies model defaults; overrides remain available below. Verify current model availability, retirement, deployment SKU and structured-output support for your subscription. Defaults do not reserve quota or guarantee regional capacity. A resource account without a compatible deployment is not a working provider.
 
-<details><summary><b>Optional-provider settings recipe</b></summary>
+<details><summary><b>Provider override recipe — not required for the default deployment</b></summary>
 
 ```powershell
 azd env set DEPLOY_CONTENT_UNDERSTANDING true
 azd env set CONTENT_UNDERSTANDING_LOCATION '<approved-extraction-region>'
 azd env set CONTENT_UNDERSTANDING_ANALYZER_ID 'document_metrics'
-# azd normally supplies its current operator principal. Manual/script paths must set it explicitly.
-azd env set AZURE_PRINCIPAL_ID '<setup-principal-guid>'
-azd env set AZURE_PRINCIPAL_TYPE 'User'
+# Bootstrap resolves the actual Azure CLI user's setup identity automatically.
+# Optional: override only when deliberately using a different authorized setup caller.
+# azd env set CONTENT_UNDERSTANDING_SETUP_PRINCIPAL_ID '<intentional-setup-caller-object-id>'
+# azd env set CONTENT_UNDERSTANDING_SETUP_PRINCIPAL_TYPE 'User'
 azd env set CONTENT_UNDERSTANDING_COMPLETION_MODEL '<supported-completion-model-name>'
 azd env set CONTENT_UNDERSTANDING_COMPLETION_MODEL_VERSION '<verified-current-version>'
 azd env set CONTENT_UNDERSTANDING_COMPLETION_DEPLOYMENT '<chosen-completion-deployment>'
@@ -210,7 +237,7 @@ azd provision --preview
 azd up
 ```
 
-These are placeholders, not recommended model pins. Each capacity's units depend on its chosen deployment; inspect current quota and pricing before accepting this example. For direct `deploy.ps1` use, supply the same names as process environment settings, including the setup principal. Setup/model defaults are required even when answer generation stays local; you can leave `DEPLOY_OPENAI=false` to evaluate extraction independently.
+These placeholders show how to override the shipped defaults, not values to paste unchanged. Each capacity's units depend on its chosen deployment; inspect current quota and pricing before overriding. For direct `deploy.ps1` use, supply the same names as process environment settings. Bootstrap automatically resolves/persists `CONTENT_UNDERSTANDING_SETUP_PRINCIPAL_ID` and `CONTENT_UNDERSTANDING_SETUP_PRINCIPAL_TYPE` for the actual Azure CLI user; these are not mandatory manual inputs. They deliberately differ from azd's reserved principal substitutions because the two CLIs may use different users in the same tenant. Override only for an intentional authorized setup caller. You can explicitly set `DEPLOY_OPENAI=false` to evaluate extraction independently, or `DEPLOY_CONTENT_UNDERSTANDING=false` to omit cloud extraction. Neither is the complete default deployment.
 
 </details>
 
@@ -220,14 +247,14 @@ The extraction adapter uses a [custom Content Understanding analyzer](https://le
 
 | Setup step | Responsible component | Stop condition |
 |---|---|---|
-| Provision dedicated extraction resource | Shared Bicep or manual runner: AIServices S0, managed identity bindings, explicit completion and embedding deployments | Missing model/version/SKU, unsupported region or insufficient role-assignment permission. |
+| Provision dedicated extraction resource | Shared Bicep or manual runner: AIServices S0, managed identity bindings, default completion and embedding deployments | Invalid override, unsupported region, unavailable quota or insufficient role-assignment permission. |
 | Initialize model defaults | `scripts/configure-content-understanding.mjs`, invoked by deployment hooks/shared runner | Existing model-name mapping differs: do not overwrite it. Missing entries alone are merged using `application/merge-patch+json`. |
 | Create domain-derived analyzer | Same setup script; data-plane analyzer API, not an ARM analyzer resource | Existing analyzer schema differs: do not replace it automatically. |
 | Invoke extraction | Runtime submits bytes to the configured analyzer with explicit model-name → deployment-name mappings | Invalid fields, absent numeric source spans, failed analysis or unsafe poll location. |
 
 Use a **new** `CONTENT_UNDERSTANDING_ANALYZER_ID` when changing the extraction schema/domain or model configuration, or perform a separately reviewed external migration. The setup path never silently replaces an existing analyzer or conflicting resource default. The operator setup principal needs Cognitive Services User as well as the runtime identity; allow for role propagation before retrying setup.
 
-The [model setup quickstart](https://learn.microsoft.com/en-us/azure/ai-services/content-understanding/quickstart/use-rest-api) and [custom analyzer documentation](https://learn.microsoft.com/en-us/azure/ai-services/content-understanding/tutorial/create-custom-analyzer) describe these distinct data-plane prerequisites. No default model/version/SKU is invented. Preview agentic analysis is not enabled.
+The [model setup quickstart](https://learn.microsoft.com/en-us/azure/ai-services/content-understanding/quickstart/use-rest-api) and [custom analyzer documentation](https://learn.microsoft.com/en-us/azure/ai-services/content-understanding/tutorial/create-custom-analyzer) describe these distinct data-plane prerequisites. Shipped deployment defaults remain configurable and quota-dependent. Preview agentic analysis is not enabled.
 
 <details><summary><b>Repeat data-plane setup after provisioning, without replacing an analyzer</b></summary>
 
@@ -247,14 +274,20 @@ Before any cloud upload, separately authorize the whole document for model proce
 
 <details><summary><b>Shared-Bicep PowerShell deployment</b></summary>
 
+The no-argument Azure-CLI-backed alternative prompts for missing explicit target values and uses the same default-on resources/identity bootstrap:
+
 ```powershell
-$env:ENTRA_CLIENT_ID = $SpaClientId
-$env:ENTRA_API_SCOPE = $ApiScope
-.\scripts\deploy.ps1 -TenantId $TenantId -SubscriptionId $SubscriptionId `
-  -EnvironmentName $EnvironmentName -Location $Location -EntraAudience $Audience
+.\scripts\deploy.ps1
 ```
 
-The script validates context, deploys `infra/azd.bicep`, remotely builds the image, updates the application and verifies health. It does not authenticate on your behalf.
+For preselected target values, use:
+
+```powershell
+.\scripts\deploy.ps1 -TenantId $TenantId -SubscriptionId $SubscriptionId `
+  -EnvironmentName $EnvironmentName -Location $Location
+```
+
+The Azure-CLI-backed script invokes the same bootstrap and identity helpers, verifies/authenticates the explicit target, deploys `infra/azd.bicep`, completes the owned managed-SPA callback before Content Understanding setup, remotely builds the image, updates the application and verifies health. It installs locked Node dependencies with `npm ci` only when required application dependencies are absent. It cannot grant directory privileges or model quota. Externally managed compatible identity can be supplied with `AUTO_CONFIGURE_ENTRA=false` and operator-maintained callback/roles; no separate Azure Developer CLI deployment is required for this entry point.
 
 </details>
 
@@ -262,8 +295,17 @@ The script validates context, deploys `infra/azd.bicep`, remotely builds the ima
 |---|---|---|
 | Re-deploy application | Confirm intended environment and image | Rerun tests after configuration changes. |
 | Reset local state | Local synthetic manager only | Do not treat it as a cloud reset mechanism. |
-| `azd down --purge` | Confirm target, resource list and retention approval first | Disposable resources only; destructive and potentially irreversible. |
+| `azd down --purge` | Confirm target, resource list and retention approval first | Disposable Azure resources only; destructive and potentially irreversible. Directory app registrations/service principals survive. |
+| Directory identity cleanup | Verify exact persisted API/SPA application IDs, ownership tags, tenant and dependants | Explicitly delete only demo-owned disposable apps/service principals; never remove reused/shared identity automatically. |
 | Keep environment | Budget and cleanup owner remain assigned | Review database and log retention costs. |
+
+<details><summary><b>Explicit directory cleanup — separate from azd down</b></summary>
+
+After confirming the same intended tenant/subscription with `az account show`, inspect both persisted `ENTRA_AUDIENCE` and `ENTRA_CLIENT_ID` in the azd environment or `entraAudience` / `entraClientId` in the ignored local reference file. Inspect each application and its enterprise application/service principal in Entra before deleting anything. Confirm ownership tags and that no other environment depends on it. Use Entra App registrations and Enterprise applications to remove only those verified disposable objects; service principals/assignments must be accounted for as part of the same cleanup review.
+
+Deleting directory identity invalidates sign-in and future reuse even if Azure resources remain. Conversely, `azd down`/resource-group deletion alone does not remove identity, preauthorization or user app-role assignment objects. No automatic directory-delete hook is provided.
+
+</details>
 
 Next: [Manual deployment equivalent](./03b-manual-deployment.md).
 

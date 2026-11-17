@@ -124,7 +124,7 @@ Use the [testing runbook](./04-testing.md) to classify failures and record actua
 | Requirement | Local path | Azure path | Recommendation |
 |---|---|---|---|
 | Embedded PDF text and spreadsheet review | Available | Same workflow | Prove local first. |
-| Varied layouts, scanned pages and cloud-supported document variants | Local implemented text/structured parsing only | Optional Content Understanding custom fields, confidence and source grounding | Authorize whole sources for model processing; add per-variant annotated evaluation and human review. |
+| Varied layouts, scanned pages and cloud-supported document variants | Local implemented text/structured parsing only | Default cloud Content Understanding custom fields, confidence and source grounding | Authorize whole sources for model processing; add per-variant annotated evaluation and human review. |
 | Model explanations | Deterministic only | Explicit Responses provider | Validate the deployment and output rejection. |
 | Hosted persistence | Workstation file | Cosmos DB | Complete app roles and restart test. |
 
@@ -138,11 +138,11 @@ Cloud checklist: [prerequisites](./02-prerequisites.md) → [deployment](./03-de
 | Step | | Action | Checkpoint |
 |---|---|---|---|
 | **E1** | <img src="./assets/icons/entra-id.svg" width="24" alt="Identity"/> | Authenticate both CLIs to the explicit target | Tenant and subscription match the reviewed values. |
-| **E2** | <img src="./assets/icons/resource-group.svg" width="24" alt="Resources"/> | Preview shared Bicep and run `azd up` | ![Static only](./assets/badges/static-only.svg) Foundation, image build and revision complete when run. |
+| **E2** | <img src="./assets/icons/resource-group.svg" width="24" alt="Resources"/> | Run `azd up`; use a separate planning command only after inputs are initialized | ![Static only](./assets/badges/static-only.svg) API/SPA bootstrap, foundation, AI models/analyzer, callback, image build and revision complete when run. |
 | **E3** | <img src="./assets/icons/users.svg" width="24" alt="Roles"/> | Use valid role-bearing API tokens | Wrong tenant/audience/role and local login are denied. |
 | **E4** | <img src="./assets/icons/cosmos-db.svg" width="24" alt="State"/> | Restart the revision after a synthetic change | Cosmos state persists and conflicts remain protected. |
 
-Keep Azure AI disabled until baseline identity and state tests pass. Enable extraction and answers independently so a failing model call cannot disguise a parsing or authorization defect.
+After explicit target authentication, a single `azd up` bootstraps API/SPA identity and deploys the complete cloud demo, including Content Understanding and Responses by default. Postprovision configures the analyzer and exact SPA callback while preserving existing URIs. Previously auto-created managed apps for the same tenant/subscription/environment are reused; externally managed apps require `AUTO_CONFIGURE_ENTRA=false` and operator-maintained callback/roles. Directory permissions, role-assignment authority and model quota are prerequisites, not bypassed. Test identity, state, extraction and answers independently so one provider failure cannot disguise another defect. The local launcher remains entirely local unless you explicitly select and authorize Azure providers.
 
 ## Part F — Present, retain evidence and clean up
 
@@ -150,7 +150,7 @@ Keep Azure AI disabled until baseline identity and state tests pass. Enable extr
 |---|---|---|---|
 | **F1** | <img src="./assets/icons/users.svg" width="24" alt="Presenter"/> | Follow the [script](./07-presenter-walkthrough.md) | Declare local versus Azure at the start. |
 | **F2** | <img src="./assets/icons/file.svg" width="24" alt="Evidence"/> | Keep sanitized fixture results and screenshots | No bearer tokens, private data or populated identifiers. |
-| **F3** | <img src="./assets/icons/cost-management.svg" width="24" alt="Costs"/> | Remove disposable cloud resources after approval | Check database retention and unrelated resources first. |
+| **F3** | <img src="./assets/icons/cost-management.svg" width="24" alt="Costs"/> | Remove disposable cloud resources after approval; review directory cleanup separately | Check retention/dependants; `azd down` leaves app registrations/service principals intact. Never delete reused identity without explicit review. |
 
 Next: [Architecture](./01-architecture.md).
 

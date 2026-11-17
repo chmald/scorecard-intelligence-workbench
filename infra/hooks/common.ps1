@@ -9,8 +9,8 @@ function Get-Setting {
 }
 
 function Get-BooleanSetting {
-    param([string]$Name)
-    $value = Get-Setting $Name 'false'
+    param([string]$Name, [string]$Default = 'false')
+    $value = Get-Setting $Name $Default
     if ($value -notin @('true', 'false')) { throw "$Name must be true or false." }
     return $value -eq 'true'
 }
@@ -19,7 +19,7 @@ function Get-DeploymentSettings {
     $name = Get-Setting 'AZURE_ENV_NAME'
     return [ordered]@{
         environmentName = $name
-        location = Get-Setting 'AZURE_LOCATION'
+        location = Get-Setting 'AZURE_LOCATION' 'swedencentral'
         tenantId = Get-Setting 'AZURE_TENANT_ID'
         entraAudience = Get-Setting 'ENTRA_AUDIENCE'
         entraClientId = Get-Setting 'ENTRA_CLIENT_ID'
@@ -29,27 +29,27 @@ function Get-DeploymentSettings {
         cosmosContainerName = Get-Setting 'COSMOS_CONTAINER' 'state'
         cosmosThroughput = [int](Get-Setting 'COSMOS_THROUGHPUT' '400')
         logRetentionDays = [int](Get-Setting 'LOG_RETENTION_DAYS' '30')
-        deployContentUnderstanding = Get-BooleanSetting 'DEPLOY_CONTENT_UNDERSTANDING'
+        deployContentUnderstanding = Get-BooleanSetting 'DEPLOY_CONTENT_UNDERSTANDING' 'true'
         contentUnderstandingLocation = Get-Setting 'CONTENT_UNDERSTANDING_LOCATION'
         contentUnderstandingAnalyzerId = Get-Setting 'CONTENT_UNDERSTANDING_ANALYZER_ID' 'document_metrics'
-        contentUnderstandingCompletionModelName = Get-Setting 'CONTENT_UNDERSTANDING_COMPLETION_MODEL'
-        contentUnderstandingCompletionModelVersion = Get-Setting 'CONTENT_UNDERSTANDING_COMPLETION_MODEL_VERSION'
-        contentUnderstandingCompletionDeploymentName = Get-Setting 'CONTENT_UNDERSTANDING_COMPLETION_DEPLOYMENT'
-        contentUnderstandingCompletionDeploymentSku = Get-Setting 'CONTENT_UNDERSTANDING_COMPLETION_DEPLOYMENT_SKU'
+        contentUnderstandingCompletionModelName = Get-Setting 'CONTENT_UNDERSTANDING_COMPLETION_MODEL' 'gpt-5.2'
+        contentUnderstandingCompletionModelVersion = Get-Setting 'CONTENT_UNDERSTANDING_COMPLETION_MODEL_VERSION' '2025-12-11'
+        contentUnderstandingCompletionDeploymentName = Get-Setting 'CONTENT_UNDERSTANDING_COMPLETION_DEPLOYMENT' 'document-completion'
+        contentUnderstandingCompletionDeploymentSku = Get-Setting 'CONTENT_UNDERSTANDING_COMPLETION_DEPLOYMENT_SKU' 'GlobalStandard'
         contentUnderstandingCompletionCapacity = [int](Get-Setting 'CONTENT_UNDERSTANDING_COMPLETION_CAPACITY' '1')
-        contentUnderstandingEmbeddingModelName = Get-Setting 'CONTENT_UNDERSTANDING_EMBEDDING_MODEL'
-        contentUnderstandingEmbeddingModelVersion = Get-Setting 'CONTENT_UNDERSTANDING_EMBEDDING_MODEL_VERSION'
-        contentUnderstandingEmbeddingDeploymentName = Get-Setting 'CONTENT_UNDERSTANDING_EMBEDDING_DEPLOYMENT'
-        contentUnderstandingEmbeddingDeploymentSku = Get-Setting 'CONTENT_UNDERSTANDING_EMBEDDING_DEPLOYMENT_SKU'
+        contentUnderstandingEmbeddingModelName = Get-Setting 'CONTENT_UNDERSTANDING_EMBEDDING_MODEL' 'text-embedding-3-large'
+        contentUnderstandingEmbeddingModelVersion = Get-Setting 'CONTENT_UNDERSTANDING_EMBEDDING_MODEL_VERSION' '1'
+        contentUnderstandingEmbeddingDeploymentName = Get-Setting 'CONTENT_UNDERSTANDING_EMBEDDING_DEPLOYMENT' 'document-embedding'
+        contentUnderstandingEmbeddingDeploymentSku = Get-Setting 'CONTENT_UNDERSTANDING_EMBEDDING_DEPLOYMENT_SKU' 'GlobalStandard'
         contentUnderstandingEmbeddingCapacity = [int](Get-Setting 'CONTENT_UNDERSTANDING_EMBEDDING_CAPACITY' '1')
-        contentUnderstandingSetupPrincipalId = Get-Setting 'AZURE_PRINCIPAL_ID'
-        contentUnderstandingSetupPrincipalType = Get-Setting 'AZURE_PRINCIPAL_TYPE' 'User'
-        deployOpenAI = Get-BooleanSetting 'DEPLOY_OPENAI'
+        contentUnderstandingSetupPrincipalId = Get-Setting 'CONTENT_UNDERSTANDING_SETUP_PRINCIPAL_ID' (Get-Setting 'AZURE_PRINCIPAL_ID')
+        contentUnderstandingSetupPrincipalType = Get-Setting 'CONTENT_UNDERSTANDING_SETUP_PRINCIPAL_TYPE' (Get-Setting 'AZURE_PRINCIPAL_TYPE' 'User')
+        deployOpenAI = Get-BooleanSetting 'DEPLOY_OPENAI' 'true'
         openAILocation = Get-Setting 'AZURE_OPENAI_LOCATION'
-        openAIModelName = Get-Setting 'AZURE_OPENAI_MODEL_NAME'
-        openAIModelVersion = Get-Setting 'AZURE_OPENAI_MODEL_VERSION'
-        openAIDeploymentName = Get-Setting 'AZURE_OPENAI_DEPLOYMENT'
-        openAIDeploymentSku = Get-Setting 'AZURE_OPENAI_DEPLOYMENT_SKU'
+        openAIModelName = Get-Setting 'AZURE_OPENAI_MODEL_NAME' 'gpt-5.2'
+        openAIModelVersion = Get-Setting 'AZURE_OPENAI_MODEL_VERSION' '2025-12-11'
+        openAIDeploymentName = Get-Setting 'AZURE_OPENAI_DEPLOYMENT' 'answers'
+        openAIDeploymentSku = Get-Setting 'AZURE_OPENAI_DEPLOYMENT_SKU' 'GlobalStandard'
         openAICapacity = [int](Get-Setting 'AZURE_OPENAI_CAPACITY' '1')
         resourceGroupName = Get-Setting 'AZURE_RESOURCE_GROUP' "rg-$name"
     }

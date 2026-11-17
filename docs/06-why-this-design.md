@@ -54,7 +54,7 @@ The problem is not simply extracting a number. A reviewer must know which source
 | Cost and access | No Azure account needed | Requires tenant, quota, identity and budget | Avoid making cloud access a prerequisite for basic learning. |
 | Evidence quality | Tiny controlled fixtures | Can evaluate approved representative inputs | Never transfer local fixture claims into live model claims. |
 
-The default is intentionally useful without pretending to be intelligent generation. It proves ingestion, correction, authorization, workflow and history. When optional AI is enabled, those same tests remain the foundation and additional service/model tests are added.
+The local default is intentionally useful without pretending to be intelligent generation. It proves ingestion, correction, authorization, workflow and history. The complete cloud deployment includes Content Understanding and Responses by default; those same tests remain the foundation and additional service/model tests are required.
 
 ## Why extraction and explanations are separate
 
@@ -73,13 +73,13 @@ Content Understanding's [custom analyzer](https://learn.microsoft.com/en-us/azur
 | Criterion | Local structured parsing | Layout-only extraction | Content Understanding custom schema | Recommendation |
 |---|---|---|---|---|
 | Stable cells/rows | Direct, deterministic values and locations | Adds unnecessary processing | Adds model variability and cost | Keep XLSX, CSV and JSON on direct local parsers. |
-| Different report layouts and wording | Limited to implemented text/alias rules | Returns text/structure; field mapping still needed | Declared typed fields map varied documents into the normalized record contract | Use the opt-in custom analyzer, not a prebuilt layout analyzer. |
+| Different report layouts and wording | Limited to implemented text/alias rules | Returns text/structure; field mapping still needed | Declared typed fields map varied documents into the normalized record contract | Use the default cloud custom analyzer, not a prebuilt layout analyzer. |
 | Traceability | Sheet/cell, row or local text location | Text/layout locations | Field confidence plus source grounding when returned | Validate every extracted field against its source; never fabricate missing grounding. |
 | Correctness and publication | Parsing can still be wrong | Layout is not numeric truth | Schema and confidence are not numeric truth | Deterministic calculations and human confirmation/approval remain mandatory for all paths. |
 | Data handling | No service receives source bytes | External extraction receives the source | Model processing receives the whole submitted source | Authorize the whole document separately; no automatic mixed-document redaction promise. |
 | Evidence available here | Tiny synthetic fixtures | Not the selected cloud path | Mocked contract tests, not representative or live validation | Collect per-format holdout annotations before claiming workload quality. |
 
-The baseline selects stable GA `2025-11-01`, not preview agentic analysis. Supported model deployments and resource defaults are operator prerequisites, separate from the optional answer model. No model/version pin or representative-corpus result is implied.
+The baseline selects stable GA `2025-11-01`, not preview agentic analysis. Cloud provisioning supplies separate completion/embedding deployments and a custom analyzer plus the separate Responses answer deployment. Shipped defaults remain configurable and quota-dependent; no representative-corpus result is implied.
 
 ## Why authorization is before the prompt
 
@@ -96,7 +96,7 @@ The baseline selects stable GA `2025-11-01`, not preview agentic analysis. Suppo
 
 The baseline rejects known restricted uploads and detectable restricted text before cloud extraction rather than pretending to redact arbitrary mixed content. Content Understanding is itself model processing: only independently authorized whole sources may be submitted. A restriction found only in returned extraction has already reached that service; rejecting it protects downstream records and explanations, not the earlier model input. Defensive read filtering also protects legacy state. Auditor visibility is derived on the server and never grants a right to restricted source text.
 
-For Azure, user API identity and managed service identity are different trust relationships. JWTs establish user roles; managed identity accesses Cosmos, registry and optional AI. [Microsoft claims-validation guidance](https://learn.microsoft.com/en-us/entra/identity-platform/claims-validation) and [managed-identity guidance](https://learn.microsoft.com/en-us/azure/container-apps/managed-identity) describe those responsibilities.
+For Azure, user API identity and managed service identity are different trust relationships. JWTs establish user roles; managed identity accesses Cosmos, registry and default-on AI services. [Microsoft claims-validation guidance](https://learn.microsoft.com/en-us/entra/identity-platform/claims-validation) and [managed-identity guidance](https://learn.microsoft.com/en-us/azure/container-apps/managed-identity) describe those responsibilities.
 
 ## Why approval and history are separate states
 
@@ -114,7 +114,7 @@ A record's historical status must be reproducible even after the active rules ch
 
 | Gap | Current POC position | Work required before expansion |
 |---|---|---|
-| Interactive cloud login | Native public SPA code+PKCE helper; API independently validates v2 access token, delegated scope and app role | Existing registrations/consent/redirects required; live tenant validation and supported identity-library integration remain production work. |
+| Interactive cloud login | Native public SPA code+PKCE helper; automatic owned API/SPA bootstrap; API independently validates v2 access token, scope and app role | Directory authority still required; external registrations use automation opt-out/manual callback; live tenant validation and supported identity-library integration remain production work. |
 | Enterprise source handling | Bounded synthetic files in workbench state | Object storage, malware scanning, retention/legal hold and deletion design. |
 | Multiple organizations/workbenches | One bounded workbench | Partitioned authorization, tenancy model and isolation testing. |
 | Scan/chart quality | Cloud adapter path, not demonstrated quality attainment | Annotated representative scans and chart-specific evaluation. |
@@ -142,7 +142,7 @@ Run the retargeting tests with a clearly different configured vocabulary and ass
 | Decision | Minimum evidence |
 |---|---|
 | Continue local POC | Real file parsing, source citations, deterministic rules and role tests pass. |
-| Try optional AI | Approved data handling, compatible deployment, mocked failure tests and budget. |
+| Validate default cloud AI | Approved data handling, compatible available deployments/quota, mocked failure tests and budget. |
 | Expand to real workload | Annotated holdout corpus, uncertainty review, access tests and measured acceptance. |
 | Plan production | Resolve the explicit feasibility gaps; perform a separate architecture/security review. |
 

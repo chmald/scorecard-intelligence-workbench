@@ -19,6 +19,11 @@ services:
       context: .
       remoteBuild: true
 hooks:
+  preup:
+    shell: pwsh
+    run: ./infra/hooks/preup.ps1
+    interactive: true
+    continueOnError: false
   preprovision:
     shell: pwsh
     run: ./infra/hooks/preprovision.ps1

@@ -9,7 +9,7 @@
 <img src="./assets/icons/managed-identity.svg" width="40" alt="Managed identity"/>
 </p>
 
-![Default](./assets/badges/default.svg) ![Opt-in](./assets/badges/opt-in.svg) ![Cloud static only](./assets/badges/static-only.svg)
+![Default](./assets/badges/default.svg) ![Cloud static only](./assets/badges/static-only.svg)
 
 This reference inventories the operator-settable values, deployment outputs, domain fields and fixed proof-of-concept bounds. It is for anyone changing a region, measurement vocabulary, model deployment or runtime behavior. Credentials are not configuration artifacts: use managed identity in Azure and keep short-lived tokens out of files and screenshots.
 
@@ -33,7 +33,7 @@ This reference inventories the operator-settable values, deployment outputs, dom
 | Local file loading | Existing `demo-ids.local.json`, otherwise `demo-ids.template.json` | The local file replaces the template object; it is not a recursive merge. |
 | Runtime service selection | Explicit environment value, then supported local-file endpoint fallback, then documented default | Auth identity generally requires explicit environment, not merely an IDs file. |
 | Programmatic tests | `createApp({config,store,env,fetchImpl,credential})` | Injected options isolate fixtures and mocked providers; not browser-authorized overrides. |
-| Deployment | azd values → quoted parameter substitutions → subscription wrapper → shared main Bicep | Wrapper forwards every main parameter. |
+| Deployment | Preup/bootstrap → persisted azd values → quoted parameter substitutions → subscription wrapper → shared main Bicep | Bootstrap resolves missing explicit target/identity and cloud defaults before parameter resolution; preprovision only validates. Wrapper forwards every main parameter. |
 | Hosted domain | Build packages the reviewed template `domain` | Ignored local config is not included in the container image. |
 | Outputs | Uppercase Bicep outputs → azd environment / `azureOutputs` | Generated references are not user secrets or proof of a working login. |
 
@@ -45,13 +45,14 @@ This reference inventories the operator-settable values, deployment outputs, dom
 | Name | Default | Effect |
 |---|---|---|
 | `AZURE_ENV_NAME` | Required for deployment | 3–16 lowercase letters/digits, begins with a letter. |
-| `AZURE_LOCATION` | Required | Runtime/foundation region; no assumed regional default. |
+| `AZURE_LOCATION` | `swedencentral` bootstrap default | Runtime/foundation region; explicitly review/confirm the target, override for approved supported regions. |
 | `AZURE_TENANT_ID` | Required for cloud/locally enabled Azure | Expected user/service tenant; target guard input. |
 | `AZURE_SUBSCRIPTION_ID` | Required for deployment/local live services | Explicit target; compared with Azure CLI account before local token use. |
 | `AZURE_RESOURCE_GROUP` | `rg-${AZURE_ENV_NAME}` | Optional existing/fresh intended group name; choose a fresh group per provisioning path. |
-| `ENTRA_AUDIENCE` | Required API application GUID in cloud | Expected `aud` in v2 access tokens; not the SPA client ID or scope URI. |
-| `ENTRA_CLIENT_ID` | Required public SPA application GUID in cloud | Public browser client identity; never a client secret. Separate from `AZURE_CLIENT_ID`. |
-| `ENTRA_API_SCOPE` | Required `api://<ENTRA_AUDIENCE>/<scope-name>` in cloud | Browser requests this scope; API requires its final scope-name segment in `scp`. Custom verified-domain identifiers are not supported by this deployment guard. |
+| `AUTO_CONFIGURE_ENTRA` | `true` | Bootstrap creates/reuses owned managed API/SPA registrations for the exact tenant/subscription/environment, scope/app roles/service principals, scoped SPA preauthorization and current-operator manager assignment. `false` skips directory mutation; supply externally managed compatible identity and maintain its callback/roles explicitly. |
+| `ENTRA_AUDIENCE` | Bootstrap-generated/reused API application GUID | Expected `aud` in v2 access tokens; not the SPA client ID or scope URI. External identity requires automation opt-out. |
+| `ENTRA_CLIENT_ID` | Bootstrap-generated/reused public SPA GUID | Public browser client identity; never a client secret. Separate from `AZURE_CLIENT_ID`. |
+| `ENTRA_API_SCOPE` | Bootstrap `api://<ENTRA_AUDIENCE>/access_as_user` | Browser requests this scope; API requires its final scope-name segment in `scp`. Existing supported scopes remain reusable. Custom verified-domain identifiers are not supported by this deployment guard. |
 | `ENTRA_ISSUER` | Required in Entra runtime | Tenant-specific HTTPS issuer; cloud template supplies it. |
 | `ENTRA_JWKS_URI` | Tenant-specific Microsoft discovery keys URL | Optional trusted signing-key endpoint; do not point at user input. |
 | `AZURE_CLIENT_ID` | Generated runtime identity client ID | Select user-assigned managed identity for service access. |
@@ -59,7 +60,7 @@ This reference inventories the operator-settable values, deployment outputs, dom
 
 Core authentication checks the actual CLI context before acquiring local Azure credentials. Setting a diagnostic environment variable to a desired tenant/subscription is not proof of that context.
 
-## Platform and optional AI deployment inputs
+## Platform and default AI deployment inputs
 
 | azd / process name | Bicep parameter | Default / effect |
 |---|---|---|
@@ -68,37 +69,43 @@ Core authentication checks the actual CLI context before acquiring local Azure c
 | `COSMOS_CONTAINER` | `cosmosContainerName` | `state`, partition key `/id`. |
 | `COSMOS_THROUGHPUT` | `cosmosThroughput` | `400`; multiple of 100, at least 400 for this provisioned-throughput template. |
 | `LOG_RETENTION_DAYS` | `logRetentionDays` | `30`; script validates 30–730. |
-| `DEPLOY_CONTENT_UNDERSTANDING` | `deployContentUnderstanding` | `false`; creates dedicated AIServices S0 extraction resource, two model deployments and scoped runtime/setup roles when explicitly enabled. |
+| `DEPLOY_CONTENT_UNDERSTANDING` | `deployContentUnderstanding` | `true`; creates dedicated AIServices S0 extraction resource, two model deployments and scoped runtime/setup roles. `false` explicitly opts out. |
 | `CONTENT_UNDERSTANDING_LOCATION` | `contentUnderstandingLocation` | Empty → `location`; use a supported extraction/model region with residency approval. |
 | `CONTENT_UNDERSTANDING_ANALYZER_ID` | `contentUnderstandingAnalyzerId` | `document_metrics`; operator-chosen custom analyzer. Use a new ID after domain/schema/model changes; no automatic replacement. |
-| `CONTENT_UNDERSTANDING_COMPLETION_MODEL` | `contentUnderstandingCompletionModelName` | Empty; enabled extraction requires an explicitly verified supported completion model name. |
-| `CONTENT_UNDERSTANDING_COMPLETION_MODEL_VERSION` | `contentUnderstandingCompletionModelVersion` | Empty; explicitly verified current version, never an invented pin. |
-| `CONTENT_UNDERSTANDING_COMPLETION_DEPLOYMENT` | `contentUnderstandingCompletionDeploymentName` | Empty; chosen completion deployment on the dedicated extraction account. |
-| `CONTENT_UNDERSTANDING_COMPLETION_DEPLOYMENT_SKU` | `contentUnderstandingCompletionDeploymentSku` | Empty; exact supported deployment SKU required. |
+| `CONTENT_UNDERSTANDING_COMPLETION_MODEL` | `contentUnderstandingCompletionModelName` | `gpt-5.2`; compatible completion model on the dedicated extraction account. |
+| `CONTENT_UNDERSTANDING_COMPLETION_MODEL_VERSION` | `contentUnderstandingCompletionModelVersion` | `2025-12-11`; verify lifecycle and regional availability before provisioning. |
+| `CONTENT_UNDERSTANDING_COMPLETION_DEPLOYMENT` | `contentUnderstandingCompletionDeploymentName` | `document-completion`; completion deployment, distinct from model name. |
+| `CONTENT_UNDERSTANDING_COMPLETION_DEPLOYMENT_SKU` | `contentUnderstandingCompletionDeploymentSku` | `GlobalStandard`; check residency policy and subscription quota. |
 | `CONTENT_UNDERSTANDING_COMPLETION_CAPACITY` | `contentUnderstandingCompletionCapacity` | `1`, positive; deployment-specific units and quota. |
-| `CONTENT_UNDERSTANDING_EMBEDDING_MODEL` | `contentUnderstandingEmbeddingModelName` | Empty; explicitly verified supported embedding model name. |
-| `CONTENT_UNDERSTANDING_EMBEDDING_MODEL_VERSION` | `contentUnderstandingEmbeddingModelVersion` | Empty; explicitly verified current version. |
-| `CONTENT_UNDERSTANDING_EMBEDDING_DEPLOYMENT` | `contentUnderstandingEmbeddingDeploymentName` | Empty; chosen embedding deployment on the same extraction account. |
-| `CONTENT_UNDERSTANDING_EMBEDDING_DEPLOYMENT_SKU` | `contentUnderstandingEmbeddingDeploymentSku` | Empty; exact supported deployment SKU required. |
+| `CONTENT_UNDERSTANDING_EMBEDDING_MODEL` | `contentUnderstandingEmbeddingModelName` | `text-embedding-3-large`; separate from completion and answers. |
+| `CONTENT_UNDERSTANDING_EMBEDDING_MODEL_VERSION` | `contentUnderstandingEmbeddingModelVersion` | `1`; verify current lifecycle and availability. |
+| `CONTENT_UNDERSTANDING_EMBEDDING_DEPLOYMENT` | `contentUnderstandingEmbeddingDeploymentName` | `document-embedding`; embedding deployment on the extraction account. |
+| `CONTENT_UNDERSTANDING_EMBEDDING_DEPLOYMENT_SKU` | `contentUnderstandingEmbeddingDeploymentSku` | `GlobalStandard`; check availability/quota separately from completion. |
 | `CONTENT_UNDERSTANDING_EMBEDDING_CAPACITY` | `contentUnderstandingEmbeddingCapacity` | `1`, positive; deployment-specific units and quota. |
-| `AZURE_PRINCIPAL_ID` | `contentUnderstandingSetupPrincipalId` | azd current principal, or explicitly provided nonzero GUID; required when extraction is enabled. Receives Cognitive Services User for data-plane setup. |
-| `AZURE_PRINCIPAL_TYPE` | `contentUnderstandingSetupPrincipalType` | `User`; allowed `User`, `ServicePrincipal`, `Group`. Must match the supplied setup principal. |
-| `DEPLOY_OPENAI` | `deployOpenAI` | `false`; optional model resource/deployment and role. |
+| `CONTENT_UNDERSTANDING_SETUP_PRINCIPAL_ID` | `contentUnderstandingSetupPrincipalId` | Bootstrap automatically resolves/persists the actual Azure CLI user's object ID when absent; intentionally supplied nonzero GUID overrides it. Receives Cognitive Services User for data-plane setup, not an automatic directory role. No manual input required for the default user flow. |
+| `CONTENT_UNDERSTANDING_SETUP_PRINCIPAL_TYPE` | `contentUnderstandingSetupPrincipalType` | Bootstrap resolves `User` with the CLI operator; override only to match an intentionally supplied setup caller. Allowed `User`, `ServicePrincipal`, `Group`. |
+| `AZURE_PRINCIPAL_ID`, `AZURE_PRINCIPAL_TYPE` | Legacy/manual-script fallback only | Reserved azd principal substitutions are not the authoritative CU setup caller. Shared settings retain these as compatibility fallback when the dedicated setup settings are absent. Prefer the dedicated settings above; Azure CLI and azd can use different users in the same tenant. |
+| `DEPLOY_OPENAI` | `deployOpenAI` | `true`; separate Responses account/deployment and runtime role. `false` explicitly opts out. |
 | `AZURE_OPENAI_LOCATION` | `openAILocation` | Empty → `location`. |
-| `AZURE_OPENAI_MODEL_NAME` | `openAIModelName` | Empty; required when model provisioning is enabled. |
-| `AZURE_OPENAI_MODEL_VERSION` | `openAIModelVersion` | Empty; verified current version required. |
-| `AZURE_OPENAI_DEPLOYMENT` | `openAIDeploymentName` | Empty; operator-chosen deployed model name, not a model family guess. |
-| `AZURE_OPENAI_DEPLOYMENT_SKU` | `openAIDeploymentSku` | Empty; explicitly verified deployment SKU required. |
+| `AZURE_OPENAI_MODEL_NAME` | `openAIModelName` | `gpt-5.2`; separate answer model account, not extraction reuse. |
+| `AZURE_OPENAI_MODEL_VERSION` | `openAIModelVersion` | `2025-12-11`; verify current lifecycle and availability. |
+| `AZURE_OPENAI_DEPLOYMENT` | `openAIDeploymentName` | `answers`; deployment name used by Responses. |
+| `AZURE_OPENAI_DEPLOYMENT_SKU` | `openAIDeploymentSku` | `GlobalStandard`; regional availability and quota remain prerequisites. |
 | `AZURE_OPENAI_CAPACITY` | `openAICapacity` | `1`, positive; units/cost depend on selected deployment. |
 | `AZURE_ENV_NAME` | `environmentName` | Required validated resource naming suffix. |
-| `AZURE_LOCATION` | `location` | Required region. |
+| `AZURE_LOCATION` | `location` | `swedencentral` bootstrap default, explicitly reviewed/overridable. |
 | `AZURE_TENANT_ID` | `tenantId` | Required tenant. |
-| `ENTRA_AUDIENCE` | `entraAudience` | Required intended audience. |
-| `ENTRA_CLIENT_ID` | `entraClientId` | Required public SPA client ID. |
-| `ENTRA_API_SCOPE` | `entraApiScope` | Required full delegated API scope. |
+| `ENTRA_AUDIENCE` | `entraAudience` | Required intended audience, populated by bootstrap or compatible existing configuration. |
+| `ENTRA_CLIENT_ID` | `entraClientId` | Required public SPA client ID, populated by bootstrap or compatible existing configuration. |
+| `ENTRA_API_SCOPE` | `entraApiScope` | Required full delegated API scope, populated by bootstrap or compatible existing configuration. |
 | `AZURE_RESOURCE_GROUP` | `resourceGroupName` | Wrapper-only; defaults to neutral `rg-` name. |
 
 The last row is a wrapper parameter rather than a main-template parameter. Every main parameter is passed through. Boolean and integer substitutions are quoted in `infra/azd.parameters.json` so the file is valid JSON before azd substitutes values.
+
+> [!IMPORTANT]
+> Model snapshot checked November 17, 2026: `gpt-5.2` version `2025-12-11` and `text-embedding-3-large` version `1` are the shipped defaults; all three deployments use `GlobalStandard` and capacity `1`. Capacity `1` is an adjustable low-demo choice, **not Microsoft sizing guidance or a throughput/quota guarantee**. The published retirement schedule lists June 8, 2027 for this completion version and February 9, 2028 for this embedding version. Recheck [CU supported models/limits](https://learn.microsoft.com/en-us/azure/ai-services/content-understanding/service-limits), [model deployment requirements](https://learn.microsoft.com/en-us/azure/ai-services/content-understanding/concepts/models-deployments), [Foundry model availability](https://learn.microsoft.com/en-us/azure/foundry/foundry-models/concepts/models-sold-directly-by-azure) and the [retirement schedule](https://learn.microsoft.com/en-us/azure/foundry/openai/concepts/model-retirement-schedule) before deployment. Availability does not imply subscription quota or approved GlobalStandard data processing.
+
+The dedicated `CONTENT_UNDERSTANDING_SETUP_PRINCIPAL_ID` / `CONTENT_UNDERSTANDING_SETUP_PRINCIPAL_TYPE` are persisted before azd parameter resolution so extraction setup permission follows the actual Azure CLI caller, even when azd is signed in as another user in the same approved tenant. Do not copy azd's reserved principal value into them without confirming who will actually run analyzer setup. Neither identity nor quota authority is broadened by this distinction.
 
 ## Runtime environment
 
@@ -112,8 +119,8 @@ The last row is a wrapper parameter rather than a main-template parameter. Every
 | `COSMOS_ENDPOINT` | Environment, otherwise `cosmosEndpoint` | Select Cosmos instead of JSON; requires valid Azure credentials. |
 | `COSMOS_DATABASE` | `workbench` | Runtime database name. |
 | `COSMOS_CONTAINER` | `state` | Runtime container name. |
-| `EXTRACTION_PROVIDER` | `local` | `local` or `azure`; Azure routes supported unstructured sources to the custom Content Understanding analyzer, labeled `azure-content-understanding`. Native XLSX/CSV/JSON remain accurately labeled local direct parsing. |
-| `ANSWER_PROVIDER` | `local` | `local` or `azure`; local is deterministic, not an LLM. |
+| `EXTRACTION_PROVIDER` | `local` for rehearsal; `azure` in default cloud deployment | `local` or `azure`; Azure routes supported unstructured sources to the custom Content Understanding analyzer, labeled `azure-content-understanding`. Native XLSX/CSV/JSON remain accurately labeled local direct parsing. |
+| `ANSWER_PROVIDER` | `local` for rehearsal; `azure` in default cloud deployment | `local` or `azure`; local is deterministic, not an LLM. |
 | `CONTENT_UNDERSTANDING_ENDPOINT` | Environment, then file `contentUnderstandingEndpoint` | HTTPS extraction origin, normally `https://<custom-subdomain>.cognitiveservices.azure.com`; no credentials/query allowed. |
 | `CONTENT_UNDERSTANDING_ANALYZER_ID` | Environment, then file `contentUnderstandingAnalyzerId` | Custom schema analyzer; template default `document_metrics`. Runtime never substitutes a prebuilt layout analyzer. |
 | `CONTENT_UNDERSTANDING_COMPLETION_MODEL` | Environment, then file `contentUnderstandingCompletionModel` | Supported model name used in the analyzer and request mapping; not the deployment name. |
@@ -198,19 +205,24 @@ The committed example explicitly marks its names, values, thresholds, annual lim
 | `SERVICE_APP_ENDPOINT_URL` | HTTPS app endpoint. |
 | `AZURE_CLIENT_ID`, `AZURE_MANAGED_IDENTITY_ID`, `AZURE_MANAGED_IDENTITY_PRINCIPAL_ID` | Runtime identity references. |
 | `COSMOS_ACCOUNT_NAME`, `COSMOS_ENDPOINT`, `COSMOS_DATABASE`, `COSMOS_CONTAINER` | Persistent-state resource bindings. |
-| `CONTENT_UNDERSTANDING_ENDPOINT`, `CONTENT_UNDERSTANDING_ANALYZER_ID` | Optional extraction endpoint and custom analyzer ID. |
-| `CONTENT_UNDERSTANDING_COMPLETION_MODEL`, `CONTENT_UNDERSTANDING_COMPLETION_DEPLOYMENT` | Optional extraction completion model and deployment. |
-| `CONTENT_UNDERSTANDING_EMBEDDING_MODEL`, `CONTENT_UNDERSTANDING_EMBEDDING_DEPLOYMENT` | Optional extraction embedding model and deployment. |
+| `CONTENT_UNDERSTANDING_ENDPOINT`, `CONTENT_UNDERSTANDING_ANALYZER_ID` | Default cloud extraction endpoint and custom analyzer ID. |
+| `CONTENT_UNDERSTANDING_COMPLETION_MODEL`, `CONTENT_UNDERSTANDING_COMPLETION_DEPLOYMENT` | Default cloud extraction completion model and deployment. |
+| `CONTENT_UNDERSTANDING_EMBEDDING_MODEL`, `CONTENT_UNDERSTANDING_EMBEDDING_DEPLOYMENT` | Default cloud extraction embedding model and deployment. |
 | `CONTENT_UNDERSTANDING_ACCOUNT_NAME`, `CONTENT_UNDERSTANDING_ACCOUNT_ID` | Dedicated extraction account references; all Content Understanding outputs are empty when disabled. |
-| `AZURE_OPENAI_ENDPOINT`, `AZURE_OPENAI_DEPLOYMENT` | Optional answer-provider endpoint and deployment. |
+| `AZURE_OPENAI_ENDPOINT`, `AZURE_OPENAI_DEPLOYMENT` | Default cloud answer-provider endpoint and deployment. |
 | `APPLICATIONINSIGHTS_CONNECTION_STRING`, `LOG_ANALYTICS_WORKSPACE_ID` | Telemetry resource references; sanitize diagnostics. |
 
 ## Script parameters and tooling environment
 
 | Script | Parameters / variables | Default / purpose |
 |---|---|---|
-| `scripts/deploy.ps1` | `-TenantId`, `-SubscriptionId`, `-EnvironmentName`, `-Location`, `-EntraAudience`, `-ResourceGroup` | Respective `AZURE_*` / `ENTRA_AUDIENCE` environment values; explicit target required. Optional extraction uses the deployment inputs above and invokes data-plane analyzer setup. |
+| `scripts/deploy.ps1` | `-TenantId`, `-SubscriptionId`, `-EnvironmentName`, `-Location`, `-EntraAudience`, `-ResourceGroup` | Respective `AZURE_*` / `ENTRA_AUDIENCE` environment values; invokes shared bootstrap, verifies the explicit target, initializes identity and default-on AI, then deploys and configures the analyzer/callback. |
 | `scripts/deploy.ps1` | `-Manual` | False; true selects imperative resource operations instead of shared Bicep deployment. |
+| `infra/hooks/preup.ps1`, `infra/hooks/bootstrap.ps1` | `Initialize-WorkbenchDeployment -PersistAzd`; target environment values and the identity/model settings above | Prompt only for missing target values, verify/login to intended CLI tenants, persist azd inputs before template parameter resolution. Explicit existing values, including AI opt-outs, are preserved. |
+| `infra/hooks/identity.ps1` | `Initialize-WorkbenchIdentity -Settings -SubscriptionId`; `Complete-WorkbenchIdentity -Settings -AppUrl` | Initialize/reuse API/SPA, scope/roles/service principals and current-operator manager; merge exact HTTPS callback preserving existing URIs. `AUTO_CONFIGURE_ENTRA=false` skips directory changes. |
+| `infra/hooks/preprovision.ps1` | Validated deployment settings | Strict read-only configuration/context validation; the planning command does not create directory applications. |
+| `infra/hooks/postprovision.ps1` | Deployment outputs and initialized settings | Persist local outputs, configure extraction defaults/analyzer and exact SPA callback. |
+| Bootstrap interaction | `AZD_NON_INTERACTIVE`, `CI` | Either set to `true` disables interactive target/login prompts; automation must supply explicit target/authentication. |
 | `scripts/start-local.ps1` | `-Port` | 8080, range 1–65535. |
 | `scripts/start-local.ps1` | `-ExtractionProvider`, `-AnswerProvider` | `local`; only `local` or `azure`. |
 | `scripts/start-local.ps1` | `-TenantId`, `-SubscriptionId` | Required and verified when either provider is Azure. |
@@ -222,7 +234,7 @@ The committed example explicitly marks its names, values, thresholds, annual lim
 | Browser isolated runtime | `PLAYWRIGHT_PORT`, `WORKBENCH_BROWSER_STATE` | Test server port (default 4387) and isolated test-state file; never share rehearsal/cloud state. |
 | Operator API examples | `WORKBENCH_ACCESS_TOKEN` | Short-lived bearer secret only in current process; never committed/configured in app. |
 
-`generate-samples.mjs` and `evaluate.mjs` use the repository configuration and produce local synthetic artifacts/results. They do not authenticate Azure or use private source files. All shipped Python documentation tools use only the Python standard library; no Python package installation is required.
+`generate-samples.mjs` and `evaluate.mjs` use the repository configuration and produce local synthetic artifacts/results. They do not authenticate Azure or use private source files. All shipped Python documentation tools use only the Python standard library; no Python package installation is required. The no-argument `scripts/deploy.ps1` prompts for missing approved target values through the same bootstrap; it runs `npm ci` only if required application dependencies are absent.
 
 ## Fixed POC bounds — not environment knobs
 
@@ -264,18 +276,19 @@ Copy the template into the ignored local file, replace the complete `domain` lab
 
 </details>
 
-<details><summary><b>Enable one cloud capability at a time</b></summary>
+<details><summary><b>Explicitly opt out for an extraction-only cloud deployment</b></summary>
 
 ```powershell
 azd env set DEPLOY_CONTENT_UNDERSTANDING true
 azd env set DEPLOY_OPENAI false
-# First complete explicit target authentication AND all extraction model/setup
-# settings in the linked recipe; the two switches alone are not sufficient.
-azd provision --preview
+# Default bootstrap supplies models, identity and setup; target verification,
+# directory permission and extraction quota are still mandatory.
 azd up
 ```
 
-Before provisioning extraction, supply **both** completion and embedding model/version/deployment/SKU/capacity settings and the setup principal in the [deployment recipe](./03-deployment.md#phase-4--enable-extraction-and-answers-independently). Those are separate from optional answer-model settings. Verify current [Content Understanding models](https://learn.microsoft.com/en-us/azure/ai-services/content-understanding/concepts/models-deployments), [Responses support](https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/responses) and [model retirement](https://learn.microsoft.com/en-us/azure/ai-services/openai/concepts/model-retirements) rather than copying a stale pin.
+The [deployment recipe](./03-deployment.md#phase-4--review-default-extraction-and-answers) documents overrides for **both** completion and embedding model/version/deployment/SKU/capacity settings, separate from the answer model. Both switches are `true` when omitted; the recipe above deliberately deviates from the complete default demo. Verify current [Content Understanding models](https://learn.microsoft.com/en-us/azure/ai-services/content-understanding/concepts/models-deployments), [Responses support](https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/responses) and [model retirement](https://learn.microsoft.com/en-us/azure/foundry/openai/concepts/model-retirement-schedule) rather than copying a stale pin.
+
+An older azd environment may retain explicit `false` values. To migrate it to the full footprint, set both `DEPLOY_CONTENT_UNDERSTANDING` and `DEPLOY_OPENAI` to `true` before `azd up`; bootstrap deliberately preserves explicit settings rather than overriding your opt-out.
 
 </details>
 

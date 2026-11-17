@@ -24,7 +24,7 @@ This symptom-led guide helps an operator isolate workstation, parsing, authoriza
 | Upload yields no numeric records | <img src="./assets/icons/file.svg" width="24" alt="Source"/> Extraction | Scan, unknown aliases, malformed source | Open source, inspect warnings and mode. |
 | Approval fails | <img src="./assets/icons/users.svg" width="24" alt="Approval"/> Workflow | Missing confirmation or no applicable records | Resolve every blocking record for that entity/period. |
 | Edit returns 409 | <img src="./assets/icons/cosmos-db.svg" width="24" alt="Conflict"/> State | Stale version or frozen period | Reload; published records cannot be changed. |
-| Azure analysis fails | <img src="./assets/icons/content-understanding.svg" width="24" alt="Azure Content Understanding"/> Optional extraction | RBAC, endpoint, custom analyzer/default mapping, timeout or unsupported file | Inspect safe error and adapter contract; do not switch to fabricated local success. |
+| Azure analysis fails | <img src="./assets/icons/content-understanding.svg" width="24" alt="Azure Content Understanding"/> Default cloud extraction | RBAC, endpoint, custom analyzer/default mapping, timeout or unsupported file | Inspect safe error and adapter contract; do not switch to fabricated local success. |
 | Model answer abstains | <img src="./assets/icons/azure-openai.svg" width="24" alt="Answers"/> Optional answers | Unsupported claim/evidence or provider failure | Inspect allowed evidence; do not force a plausible answer. |
 
 ## At a glance
@@ -103,7 +103,7 @@ The [custom analyzer reference](https://learn.microsoft.com/en-us/azure/ai-servi
 
 | Symptom | Inspect | Safe action |
 |---|---|---|
-| Setup 403 | Cognitive Services User for both setup principal and runtime identity; intended resource; propagation | Correct the scoped assignment and retry setup after propagation; never enable keys to bypass it. |
+| Setup 403 | Cognitive Services User for both actual Azure CLI setup caller and runtime identity; intended resource; propagation | Bootstrap resolves `CONTENT_UNDERSTANDING_SETUP_PRINCIPAL_ID` / `CONTENT_UNDERSTANDING_SETUP_PRINCIPAL_TYPE` automatically. Check intentional overrides and differing az/azd users; reserved azd principal values are not proof of the CLI setup caller. Correct the scoped assignment and retry after propagation; never enable keys to bypass it. |
 | Defaults conflict | Model-name → deployment-name map on the dedicated extraction account | Setup adds missing entries only. Resolve deliberately outside the automatic path; do not overwrite shared defaults. |
 | Existing analyzer mismatch | Analyzer ID, domain-derived field schema and model choices | Use a new analyzer ID or separately reviewed migration; no destructive automatic replacement. |
 | No usable numeric evidence | `Metrics` typed values and spans into returned Markdown; source page/region when present | Abstain and inspect the original source; do not scrape arbitrary Markdown numbers as a fallback. |
@@ -124,10 +124,16 @@ The [custom analyzer reference](https://learn.microsoft.com/en-us/azure/ai-servi
 > [!NOTE]
 > An abstention or blocked publication is a useful outcome when evidence is missing. The demonstration should show the guard working, not conceal it.
 
-## azd, registry, Cosmos and optional AI
+## azd, registry, Cosmos and default cloud AI
 
 | Failure | Safe diagnostic | Remedy |
 |---|---|---|
+| Preup cannot resolve target | Missing explicit tenant/subscription; non-interactive process | Provide approved target settings before rerunning; never infer intent from cached Azure CLI state. |
+| Directory bootstrap 403 | Current operator's app-management and user app-role-assignment authority | Ask the tenant administrator for the required approved authority; Azure Contributor is not a directory role. Do not grant broad Graph application access or tenant-wide consent to make the demo work. |
+| Same-name app ownership mismatch | Target-derived display name and ownership marker | Stop; do not adopt an unowned app. Same-target managed apps are reusable; externally managed apps require `AUTO_CONFIGURE_ENTRA=false` and complete manual identity/callback configuration. |
+| Callback absent after provisioning | `AUTO_CONFIGURE_ENTRA`, persisted SPA ID, ownership and postprovision failure | Automation merges `/auth/callback` only on the owned managed SPA, preserving existing URIs. With automation disabled, maintain the exact HTTPS SPA redirect yourself. |
+| AI unexpectedly provisioned | Both `DEPLOY_CONTENT_UNDERSTANDING` and `DEPLOY_OPENAI` default `true` | This is the complete cloud default. Set an explicit `false` only for an intentional reduced deployment; review costs and resource plan. Local rehearsal still forces local providers. |
+| Model deployment rejected | Exact configured model/version, `GlobalStandard`, region and quota | Defaults are configurable, not capacity guarantees. Review [configuration](./08-configuration-reference.md#platform-and-default-ai-deployment-inputs); obtain quota or choose a supported approved override. |
 | Preprovision target mismatch | Compare explicit tenant/subscription to `az account show` | Re-authenticate both CLIs to the approved target; do not weaken the hook. |
 | Environment name rejected | Check 3–16 lowercase alphanumeric starting with a letter | Choose a fresh valid name. |
 | Bootstrap image still running | `/health` is not expected JSON | Complete app build/deploy; provision success is insufficient. |

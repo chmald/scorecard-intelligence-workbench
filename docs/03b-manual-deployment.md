@@ -9,7 +9,7 @@
 <img src="./assets/icons/container-apps.svg" width="40" alt="Container Apps"/>
 </p>
 
-![Manual path](./assets/badges/manual-path.svg) ![Cloud static only](./assets/badges/static-only.svg) ![Opt-in](./assets/badges/opt-in.svg)
+![Manual path](./assets/badges/manual-path.svg) ![Cloud static only](./assets/badges/static-only.svg) ![Cloud defaults](./assets/badges/default.svg)
 
 This runbook creates the same logical resources and permissions as the Bicep path without submitting an infrastructure template. It is for teams that need to inspect creation steps in the Portal or use imperative resource operations. The supplied manual runner performs explicit resource requests and remote image build; it does not call an ARM deployment or Bicep.
 
@@ -19,7 +19,7 @@ This runbook creates the same logical resources and permissions as the Bicep pat
 |---|---|---|
 | <img src="./assets/icons/powershell.svg" width="24" alt="PowerShell"/> | Runnable no-IaC entry point | `scripts/deploy.ps1 -Manual` after explicit authentication. |
 | <img src="./assets/icons/resource-group.svg" width="24" alt="Resources"/> | Resource parity | Same types, SKUs, security properties and outputs as the template. |
-| <img src="./assets/icons/keys.svg" width="24" alt="Permissions"/> | Permission parity | Registry pull, Cosmos data role and optional AI user roles. |
+| <img src="./assets/icons/keys.svg" width="24" alt="Permissions"/> | Permission parity | Registry pull, Cosmos data role and default-on AI user roles; API/SPA bootstrap grants only the current operator manager. |
 | <img src="./assets/icons/file.svg" width="24" alt="Reference file"/> | Output parity | Same ignored `demo-ids.local.json` keys; preserve the `domain` block. |
 
 ## Manual deployment map
@@ -45,10 +45,7 @@ This runbook creates the same logical resources and permissions as the Bicep pat
 ```powershell
 $TenantId = '<approved-tenant-id>'
 $SubscriptionId = '<approved-subscription-id>'
-$Location = '<approved-region>'
-$Audience = '<existing-api-application-client-id-guid>'
-$env:ENTRA_CLIENT_ID = '<existing-public-spa-client-id-guid>'
-$env:ENTRA_API_SCOPE = 'api://<existing-api-application-client-id-guid>/access_as_user'
+$Location = 'swedencentral' # Default; override only with an approved compatible region.
 $EnvironmentName = 'workbench02'
 $ResourceGroup = "rg-$EnvironmentName"
 
@@ -56,14 +53,11 @@ az login --tenant $TenantId
 az account set --subscription $SubscriptionId
 az account show --query '{tenant:tenantId,subscription:id,user:user.name}' -o table
 # Stop unless both target identifiers match.
-$env:DEPLOY_CONTENT_UNDERSTANDING = 'false'
-$env:DEPLOY_OPENAI = 'false'
 .\scripts\deploy.ps1 -Manual -TenantId $TenantId -SubscriptionId $SubscriptionId `
-  -EnvironmentName $EnvironmentName -Location $Location `
-  -EntraAudience $Audience -ResourceGroup $ResourceGroup
+  -EnvironmentName $EnvironmentName -Location $Location -ResourceGroup $ResourceGroup
 ```
 
-Inspect [`infra/deploy-manual.ps1`](../infra/deploy-manual.ps1) before running if you need change-by-change review. It contains the concrete ordered resource requests. The shared validator stops on an invalid target, audience, name or unsupported configuration.
+Inspect [`infra/deploy-manual.ps1`](../infra/deploy-manual.ps1) before running if you need change-by-change review. It contains the concrete ordered resource requests. The shared bootstrap verifies the explicit target, initializes defaults and creates/reuses API/SPA identity before strict validation. Both AI deployment switches default to `true`; no model-setup or callback step is required afterward when the runner succeeds. Directory/app-role-assignment permissions, quota and whole-source authorization remain real gates.
 
 </details>
 
@@ -160,7 +154,7 @@ az cosmosdb sql role assignment create --subscription $SubscriptionId -g $Resour
 
 The scope shown matches the bounded account-owned workbench. For a shared account, narrow and validate the scope. Cosmos data-plane RBAC is not ordinary account IAM ([Microsoft Learn](https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/how-to-connect-role-based-access-control)); Portal-only parity may require an administrator to execute this native role step.
 
-## Phase 4 — Optional extraction and model resources
+## Phase 4 — Default extraction and model resources
 
 | Step | | Portal equivalent | Parity requirement |
 |---|---|---|---|
@@ -170,9 +164,9 @@ The scope shown matches the bounded account-owned workbench. For a shared accoun
 | **4.4** | <img src="./assets/icons/content-understanding.svg" width="24" alt="Custom analyzer"/> | Content Understanding Studio / data-plane setup script | ![GA API](./assets/badges/ga.svg) Fill only missing model defaults; create domain-derived custom schema with confidence and source grounding, API `2025-11-01`. Analyzer setup is not an ARM resource. |
 
 > [!IMPORTANT]
-> Keep both resources disabled unless needed. The complete manual runner implements the optional resources and roles from the same settings as the template; it refuses to invent a model or deployment SKU.
+> Both resources are enabled by default, using the same configurable models, SKUs and roles as the template. The complete manual runner includes their model deployments and data-plane setup. An explicit opt-out is a reduced-footprint alternative, not the default complete demo; quota and permissions cannot be bypassed.
 
-Use the [optional-provider recipe](./03-deployment.md#phase-4--enable-extraction-and-answers-independently) before running `deploy.ps1 -Manual`. The shared runner calls `scripts/configure-content-understanding.mjs`; Portal-only operators must also complete that data-plane setup. An account and model deployments alone are not parity. Conflicting model defaults or an existing mismatched analyzer cause setup to stop, not overwrite: select a new analyzer ID or plan a separate migration. Review source-data residency and whole-document authorization for model processing before using extraction; detecting restricted text only after analysis does not mean it was excluded from model input.
+Review the [provider defaults and override recipe](./03-deployment.md#phase-4--review-default-extraction-and-answers) before running `deploy.ps1 -Manual`. The shared runner calls `scripts/configure-content-understanding.mjs`; Portal-only operators must also complete that data-plane setup. An account and model deployments alone are not parity. Conflicting model defaults or an existing mismatched analyzer cause setup to stop, not overwrite: select a new analyzer ID or plan a separate migration. Review source-data residency and whole-document authorization for model processing before using extraction; detecting restricted text only after analysis does not mean it was excluded from model input.
 
 ## Phase 5 — Environment, application and settings
 
@@ -185,7 +179,7 @@ Use the [optional-provider recipe](./03-deployment.md#phase-4--enable-extraction
 
 The complete manual runner handles environment and application ARM bodies, registry identity and settings together. For visible step-by-step changes, inspect `Invoke-ManualDeployment` and execute its resource sections under a change review. This avoids incomplete CLI flags creating a public container without the required authentication/state settings.
 
-Required app settings include `AUTH_MODE=entra`, explicit tenant/API-audience GUID, `ENTRA_CLIENT_ID` for the public SPA, full `ENTRA_API_SCOPE`, `COSMOS_ENDPOINT`, database/container, `AZURE_CLIENT_ID`, provider switches and optional endpoints. Complete the same [API/SPA registration, consent, app-role and exact callback setup](./03-deployment.md#portal-identity-setup--required-outside-bicep) as the IaC path. The browser uses PKCE; no client secret, Blob token store or platform auth resource is needed. See the [complete configuration reference](./08-configuration-reference.md#runtime-environment). Never set cloud auth to `local`.
+Required app settings include `AUTH_MODE=entra`, explicit tenant/API-audience GUID, `ENTRA_CLIENT_ID` for the public SPA, full `ENTRA_API_SCOPE`, `COSMOS_ENDPOINT`, database/container, `AZURE_CLIENT_ID`, provider switches and enabled endpoints. The runner automatically handles the same [API/SPA, preauthorization, app-role and exact callback setup](./03-deployment.md#portal-identity-setup--reference-for-reuse-and-inspection) as the IaC path; that table also documents the Portal-only equivalent. Existing callback URIs are preserved. The browser uses PKCE; no client secret, Blob token store or platform auth resource is needed. See the [complete configuration reference](./08-configuration-reference.md#runtime-environment). Never set cloud auth to `local`.
 
 ## Phase 6 — Outputs and validation
 
@@ -194,9 +188,9 @@ Required app settings include `AUTH_MODE=entra`, explicit tenant/API-audience GU
 | <img src="./assets/icons/container-apps.svg" width="24" alt="Endpoint"/> Application URL | Container App → Overview → Application URL | `appUrl` |
 | <img src="./assets/icons/cosmos-db.svg" width="24" alt="Cosmos endpoint"/> Database endpoint | Cosmos DB → Overview | `cosmosEndpoint`, database/container names |
 | <img src="./assets/icons/managed-identity.svg" width="24" alt="Identity"/> Identity | Managed identity → Overview | `managedIdentityClientId`, `azureOutputs` |
-| <img src="./assets/icons/azure-openai.svg" width="24" alt="Model endpoint"/> Optional endpoints/deployment | Respective resource Overview / deployment page | `modelEndpoint`, `modelDeployment`, extraction endpoint |
+| <img src="./assets/icons/azure-openai.svg" width="24" alt="Model endpoint"/> AI endpoints/deployment | Respective resource Overview / deployment page | `modelEndpoint`, `modelDeployment`, extraction endpoint |
 
-The full runner writes these automatically and preserves `domain`. Portal-only operators must populate the same ignored file by hand; do not commit it. Complete [Phase 3 identity/persistence checks](./03-deployment.md#phase-3--validate-deployed-identity-and-state) and the [cloud test matrix](./04-testing.md#live-validation). Those tests are identical for both deployment paths.
+The full runner writes these automatically and preserves `domain`. Portal-only operators must populate the same ignored file by hand; do not commit it. Complete [Phase 3 identity/persistence checks](./03-deployment.md#phase-3--validate-deployed-identity-and-state) and the [cloud test matrix](./04-testing.md#live-validation). Those tests are identical for both deployment paths. Resource-group cleanup does not delete directory app registrations/service principals; follow the [explicit identity cleanup guidance](./03-deployment.md#alternate-entry-point-and-cleanup), preserving any reused/shared apps.
 
 Next: [Testing](./04-testing.md).
 
