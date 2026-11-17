@@ -1,0 +1,28 @@
+# Changelog
+
+## 2026-11-17 — Content Understanding migration
+
+- Replaced the optional Document Intelligence layout path with Azure Content Understanding **custom schema-based field extraction** for varied layouts. The baseline uses stable GA `2025-11-01`, not preview agentic analysis ([analyzers](https://learn.microsoft.com/en-us/azure/ai-services/content-understanding/concepts/analyzer-reference), [Analyze API](https://learn.microsoft.com/en-us/rest/api/contentunderstanding/content-analyzers/analyze?view=rest-contentunderstanding-2025-11-01)).
+- Kept direct local XLSX/CSV/JSON parsing, deterministic calculations, synthetic rehearsal, source-rating separation and human confirmation/manager approval. Cloud candidates require typed field validation, confidence and genuine source grounding; no arbitrary Markdown-number fallback or invented citations.
+- Documented the dedicated AIServices S0 extraction account, explicit completion/embedding deployments and Cognitive Services User for runtime/setup. Model names, versions and SKUs are operator-supplied; no retiring model pins are invented ([model deployments](https://learn.microsoft.com/en-us/azure/ai-services/content-understanding/concepts/models-deployments), [keyless authentication](https://learn.microsoft.com/en-us/azure/ai-services/authentication)).
+- Added the separate data-plane setup lifecycle: merge missing model defaults only, reject conflicting mappings, create the custom analyzer, and reject existing schema mismatch. Schema/domain/model changes require a new analyzer ID or separately reviewed migration—not automatic destructive replacement.
+- Clarified whole-document model-processing authorization: known detectable restrictions are rejected before extraction; restrictions found only in returned text were already processed by the service. No automatic arbitrary scanned/mixed-document redaction or numeric-correctness guarantee is claimed.
+- Refreshed the existing 14 diagram pairs in place, retaining geometry, with official Microsoft Content Understanding product artwork and updated source/identity/configuration boundaries. The artwork comes from the current Microsoft product connector, not another service's renamed icon ([attribution](./docs/assets/icons/README.md)).
+- Added an editable review-unit field and missing-unit correction coverage. Evidence details expose actual field confidence, source spans and optional geometry without inventing confidence or source locations; provider labels and offered formats reflect the actual route.
+- Verified **47/47 Node tests**, **10/10 Edge browser tests**, **3/3 Python documentation tests** and **23/23 synthetic evaluation checks** (`fixtureOnly=true`) on November 17; documentation checks report zero errors/warnings. Node coverage includes ten new Content Understanding tests and an actual restricted-text PDF preflight; cloud requests remain mocked. Recaptured both existing UI screenshots from the real local synthetic browser rehearsal and visually reviewed both.
+- No live service/deployment result or representative-corpus quality result is claimed. The November 17 tiny synthetic evaluation and local/mock results do not validate the live cloud provider.
+
+## 0.1.0 — 2026-11-16
+
+- Added the bounded document-to-review workbench runbooks: real uploads and extraction, page/cell/row evidence, deterministic threshold status, correction/confirmation, manager approval, draft follow-ups and immutable published history.
+- Documented local synthetic rehearsal as deterministic, not a language model. Separated proposed starting targets, tiny fixture measurements, mocked adapter tests and unvalidated live Azure behavior.
+- Added tenant-explicit deployment and manual resource-equivalent walkthroughs, configuration inventory, security boundaries, uncertainty and production feasibility gaps.
+- Added official Microsoft icon diagrams, editable draw.io sources, 2× PNG exports, offline badges and documentation regression checks.
+- Initially used Document Intelligence layout extraction; superseded by the November 17 Content Understanding migration above.
+- Verified Azure OpenAI `/openai/v1/responses` and `text.format` response formatting; no guessed model/version pins ([Responses](https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/responses), [structured outputs](https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/structured-outputs)).
+- Verified the documented separation of API token validation, managed-identity image pulls and Cosmos data-plane roles ([claims](https://learn.microsoft.com/en-us/entra/identity-platform/claims-validation), [image pull](https://learn.microsoft.com/en-us/azure/container-apps/managed-identity-image-pull), [Cosmos](https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/how-to-connect-role-based-access-control)).
+- Added public SPA authorization-code/S256-PKCE sign-in configuration, exact callback, delegated consent and API app-role setup; independently verified API access tokens remain the authorization boundary ([protocol](https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-auth-code-flow), [API scopes](https://learn.microsoft.com/en-us/entra/identity-platform/quickstart-configure-app-expose-web-apis)). No client secret or platform token store is required; the native helper is not a production identity-library substitute.
+- Clarified that configured telemetry resources do not imply application instrumentation, app registrations/consent are operator prerequisites, and chart detection/OCR availability is not demonstrated chart-value accuracy.
+- No live Azure deployment, representative organizational-corpus quality result or production readiness is claimed.
+
+*Last updated: 2026-11-17*

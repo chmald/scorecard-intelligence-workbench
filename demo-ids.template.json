@@ -1,0 +1,41 @@
+{
+  "_template": true,
+  "_note": "Copy to demo-ids.local.json for a local configuration. Populated IDs and secrets must not be committed. Pipelines use environment configuration, not this file.",
+  "tenantId": "",
+  "subscriptionId": "",
+  "resourceGroup": "",
+  "appUrl": "",
+  "contentUnderstandingEndpoint": "",
+  "contentUnderstandingAnalyzerId": "document_metrics",
+  "contentUnderstandingCompletionModel": "",
+  "contentUnderstandingCompletionDeployment": "",
+  "contentUnderstandingEmbeddingModel": "",
+  "contentUnderstandingEmbeddingDeployment": "",
+  "modelEndpoint": "",
+  "modelDeployment": "",
+  "cosmosEndpoint": "",
+  "cosmosDatabase": "",
+  "cosmosContainer": "",
+  "managedIdentityClientId": "",
+  "entraAudience": "",
+  "entraClientId": "",
+  "entraApiScope": "",
+  "azureOutputs": {},
+  "domain": {
+    "_note": "The only workload-specific configuration surface. All sample names, values, thresholds and baselines are synthetic examples, not approved organizational policy.",
+    "title": "Performance Intelligence Workbench",
+    "entityLabel": "Customer",
+    "period": "2026-10",
+    "toolName": "performance_evidence",
+    "toolDescription": "Retrieve authorized performance records with source evidence.",
+    "confidenceThreshold": 0.9,
+    "rulesVersion": "synthetic-1",
+    "acceptedFileTypes": [".pdf", ".xlsx", ".csv", ".txt", ".json", ".png", ".jpg", ".jpeg", ".tif", ".tiff", ".bmp", ".docx", ".pptx", ".html", ".md", ".eml", ".msg"],
+    "kpis": [
+      { "id": "delivery", "name": "On-time delivery", "aliases": ["OTD", "Delivery reliability", "Liefertermintreue"], "unit": "%", "direction": "higher", "target": 98, "watch": 97, "warning": 95, "internalBaseline": { "value": 97.5, "unit": "%", "synthetic": true, "provenance": "Synthetic internal comparison baseline" } },
+      { "id": "defects", "name": "Defect rate", "aliases": ["PPM", "Defective parts", "Fehlerquote"], "unit": "ppm", "direction": "lower", "target": 100, "watch": 150, "warning": 250, "internalBaseline": { "value": 120, "unit": "ppm", "synthetic": true, "provenance": "Synthetic internal comparison baseline" } },
+      { "id": "response", "name": "Response time", "aliases": ["Response days", "Reaktionszeit"], "unit": "days", "direction": "lower", "target": 2, "watch": 3, "warning": 5, "internalBaseline": { "value": 2.5, "unit": "days", "synthetic": true, "provenance": "Synthetic internal comparison baseline" } },
+      { "id": "events", "name": "Cumulative events", "aliases": ["Year-to-date events", "Annual event total"], "unit": "count", "direction": "annual_cumulative", "annualLimit": 6, "accumulation": "reported_ytd", "internalBaseline": { "value": 4, "unit": "count", "synthetic": true, "provenance": "Synthetic internal comparison baseline" } }
+    ]
+  }
+}

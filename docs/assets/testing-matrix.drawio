@@ -1,0 +1,107 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mxfile host="Electron" version="26.0.0">
+  <diagram id="testing-matrix" name="Verification matrix">
+    <mxGraphModel grid="1" gridSize="10" page="1" pageWidth="1600" pageHeight="920" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="c1" value="" style="rounded=0;fillColor=#0078D4;strokeColor=none;html=1;fontFamily=Segoe UI;" vertex="1" parent="1">
+          <mxGeometry x="20" y="20" width="880.0000000000001" height="6" as="geometry" />
+        </mxCell>
+        <mxCell id="c2" value="" style="rounded=0;fillColor=#5C2D91;strokeColor=none;html=1;fontFamily=Segoe UI;" vertex="1" parent="1">
+          <mxGeometry x="900.0000000000001" y="20" width="680.0" height="6" as="geometry" />
+        </mxCell>
+        <mxCell id="c3" value="&lt;b&gt;Verification matrix&lt;/b&gt;" style="text;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=28;fontColor=#201F1E;html=1;fontFamily=Segoe UI;" vertex="1" parent="1">
+          <mxGeometry x="40" y="40" width="1520" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="c4" value="Fixture evidence, mocked cloud adapters and real Azure validation are different evidence classes." style="text;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=16;fontColor=#605E5C;html=1;fontFamily=Segoe UI;" vertex="1" parent="1">
+          <mxGeometry x="40" y="100" width="1520" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="c5" value="Legend: DEFAULT = reproducible local path | OPT-IN = Azure capability | GATE = human or policy decision" style="text;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=13;fontColor=#605E5C;html=1;fontFamily=Segoe UI;" vertex="1" parent="1">
+          <mxGeometry x="40" y="830" width="1520" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="c6" value="Scorecard Intelligence Workbench | 2026-11-17 | Icons: Microsoft Azure V24 + Entra + official Content Understanding artwork" style="text;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=11;fontColor=#605E5C;html=1;fontFamily=Segoe UI;" vertex="1" parent="1">
+          <mxGeometry x="40" y="870" width="1520" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="c7" value="&lt;b&gt;Local fixtures&lt;/b&gt;&lt;br&gt;&lt;font color='#605E5C'&gt;Run status comes from test output&lt;/font&gt;" style="shape=label;rounded=1;arcSize=10;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#0078D4;strokeWidth=1.5;fontSize=15;align=left;verticalAlign=middle;spacingLeft=62;spacingRight=12;imageWidth=40;imageHeight=40;imageAlign=left;iconKey=file;html=1;fontFamily=Segoe UI;image=data:image/svg+xml,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOCIgaGVpZ2h0PSIxOCIgdmlld0JveD0iMCAwIDE4IDE4Ij48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImU1MzcxNTY1LWNjOWItNDcyOS05ZTU0LTliYWMxMzVhOTJiZCIgeDE9IjkiIHkxPSIxOCIgeDI9IjkiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiMwMDc4ZDQiIC8+PHN0b3Agb2Zmc2V0PSIwLjgxNyIgc3RvcC1jb2xvcj0iIzVlYTBlZiIgLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48dGl0bGU+TXNQb3J0YWxGeC5iYXNlLmltYWdlcy0yMjwvdGl0bGU+PGcgaWQ9ImFiYzNlM2Y5LWQ0ZGItNDFhZC04YjYwLTM3OGQxYzMzNDhmNyI+PGc+PGc+PHBhdGggZD0iTTEwLjAyMy4xMzRIMi4zNjJBLjYwNS42MDUsMCwwLDAsMS43NTcuNzRWMTcuMjZhLjYwNS42MDUsMCwwLDAsLjYwNS42MDZIMTUuNjM4YS42MDUuNjA1LDAsMCwwLC42LS42MDZWNi4zMjdhLjYwNS42MDUsMCwwLDAtLjYtLjYwNkgxMS4yMzJhLjYwNS42MDUsMCwwLDEtLjYtLjYwNVYuNzRBLjYuNiwwLDAsMCwxMC4wMjMuMTM0WiIgZmlsbD0iI2ZmZiIgLz48cGF0aCBkPSJNOS43NDMuOTA4VjUuMDU3YTEuNTI0LDEuNTI0LDAsMCwwLDEuNTIsMS41MjNoNC4xOFYxNy4wOTJIMi41NTdWLjkwOEg5Ljc0M00xMC4wMzYsMEgyLjI2NEEuNjE0LjYxNCwwLDAsMCwxLjY1LjYxNXYxNi43N0EuNjE0LjYxNCwwLDAsMCwyLjI2NCwxOEgxNS43MzZhLjYxNC42MTQsMCwwLDAsLjYxNC0uNjE1VjYuMjg2YS42MTQuNjE0LDAsMCwwLS42MTQtLjYxNEgxMS4yNjNhLjYxNC42MTQsMCwwLDEtLjYxMy0uNjE1Vi42MTVBLjYxNC42MTQsMCwwLDAsMTAuMDM2LDBaIiBmaWxsPSJ1cmwoI2U1MzcxNTY1LWNjOWItNDcyOS05ZTU0LTliYWMxMzVhOTJiZCkiIC8+PHBhdGggZD0iTTE2LjExNiw1Ljc5NCwxMC40MzguMTM0VjQuNzQ2YTEuMDQxLDEuMDQxLDAsMCwwLDEuMDM1LDEuMDQ4WiIgZmlsbD0iIzAwNzhkNCIgLz48L2c+PHJlY3QgeD0iNCIgeT0iOC4xOTYiIHdpZHRoPSI5Ljk5OSIgaGVpZ2h0PSIxLjM0MSIgcng9IjAuNjAzIiBmaWxsPSIjNWVhMGVmIiAvPjxyZWN0IHg9IjQiIHk9IjEwLjU5OSIgd2lkdGg9IjkuOTk5IiBoZWlnaHQ9IjEuMzQxIiByeD0iMC42MDMiIGZpbGw9IiM1ZWEwZWYiIC8+PHJlY3QgeD0iNCIgeT0iMTMuMDAyIiB3aWR0aD0iNi4zMDIiIGhlaWdodD0iMS4zNDEiIHJ4PSIwLjYwMyIgZmlsbD0iIzVlYTBlZiIgLz48L2c+PC9nPjwvc3ZnPg==;" vertex="1" parent="1">
+          <mxGeometry x="390" y="180" width="350" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="c8" value="DEFAULT" style="rounded=1;arcSize=50;fillColor=#0078D4;strokeColor=#FFFFFF;fontColor=#FFFFFF;fontSize=10;fontStyle=1;html=1;fontFamily=Segoe UI;" vertex="1" parent="1">
+          <mxGeometry x="660" y="170" width="80" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="c9" value="&lt;b&gt;Mocked Azure&lt;/b&gt;&lt;br&gt;&lt;font color='#605E5C'&gt;Run status comes from test output&lt;/font&gt;" style="shape=label;rounded=1;arcSize=10;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#0078D4;strokeWidth=1.5;fontSize=15;align=left;verticalAlign=middle;spacingLeft=62;spacingRight=12;imageWidth=40;imageHeight=40;imageAlign=left;iconKey=gear;html=1;fontFamily=Segoe UI;image=data:image/svg+xml,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOCIgaGVpZ2h0PSIxOCIgdmlld0JveD0iMCAwIDE4IDE4Ij48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImI3NmJhMzU2LTNkMjktNDFmNS1hNTIxLTg2NDdmZTg0YThiNCIgeDE9IjkiIHkxPSIyOTcuNSIgeDI9IjkiIHkyPSIyODAuNSIgZ3JhZGllbnRUcmFuc2Zvcm09InRyYW5zbGF0ZSgwIC0yODApIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjMzJiZWRkIiAvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzMyZDRmNSIgLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cGF0aCBkPSJNMTcuNSw5LjlWOGwtLjMtLjEtMi4xLS43LS41LTEuMywxLjEtMi4yTDE0LjMsMi4zbC0uMy4xLTEuOSwxLTEuMy0uNUw5LjkuNUg4TDcuOS44bC0uNywyLTEuMy42TDMuNywyLjMsMi4zLDMuN2wuMS4zLDEsMS45TDIuOSw3LjIuNSw4LjFWMTBsLjMuMSwyLjEuNy41LDEuM0wyLjMsMTQuM2wxLjQsMS40LjMtLjEsMS45LTEsMS4zLjUuOSwyLjNIMTBsLjEtLjMuNy0yLjEsMS4zLS41LDIuMiwxLjEsMS40LTEuNC0uMS0uMi0xLTEuOS41LTEuM1oiIGZpbGw9InVybCgjYjc2YmEzNTYtM2QyOS00MWY1LWE1MjEtODY0N2ZlODRhOGI0KSIgLz48cGF0aCBkPSJNMTIuMyw2LjVsLS44LjdhMi45MTEsMi45MTEsMCwwLDEtLjMsNC4yQTIuOTA2LDIuOTA2LDAsMCwxLDcsMTEuMSwyLjkxLDIuOTEsMCwwLDEsNyw3LjJoLjFsLjYuNWguMVY3LjZsLS4yLTJjMC0uMS0uMS0uMS0uMi0uMWwtMS45LjNhLjEuMSwwLDAsMC0uMS4xaDBsLjYuNUg2di4xSDZhMy45NzYsMy45NzYsMCwxLDAsNi4xLDUuMUEzLjYzLDMuNjMsMCwwLDAsMTIuMyw2LjVaIiBmaWxsPSIjZmZmIiAvPjwvc3ZnPg==;" vertex="1" parent="1">
+          <mxGeometry x="780" y="180" width="350" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="c10" value="DEFAULT" style="rounded=1;arcSize=50;fillColor=#0078D4;strokeColor=#FFFFFF;fontColor=#FFFFFF;fontSize=10;fontStyle=1;html=1;fontFamily=Segoe UI;" vertex="1" parent="1">
+          <mxGeometry x="1050" y="170" width="80" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="c11" value="&lt;b&gt;Live Azure&lt;/b&gt;&lt;br&gt;&lt;font color='#605E5C'&gt;Run status comes from test output&lt;/font&gt;" style="shape=label;rounded=1;arcSize=10;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#0078D4;strokeWidth=1.5;fontSize=15;align=left;verticalAlign=middle;spacingLeft=62;spacingRight=12;imageWidth=40;imageHeight=40;imageAlign=left;iconKey=container-apps;html=1;fontFamily=Segoe UI;image=data:image/svg+xml,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOCIgaGVpZ2h0PSIxOCIgdmlld0JveD0iMCAwIDE4IDE4Ij48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImIyN2YxYWQwLTdkMTEtNDI0Ny05ZGEzLTkxYmNlNjIxMWYzMiIgeDE9IjguNzk4IiB5MT0iOC43MDMiIHgyPSIxNC42ODMiIHkyPSI4LjcwMyIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPjxzdG9wIG9mZnNldD0iMC4wMDEiIHN0b3AtY29sb3I9IiM3NzNhZGMiIC8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjNTUyZjk5IiAvPjwvbGluZWFyR3JhZGllbnQ+PGxpbmVhckdyYWRpZW50IGlkPSJiMmY5MjExMi00Y2E5LTRiMTctYTAxOS1jOWYyNmMxYTRhOGYiIHgxPSI1Ljc2NCIgeTE9IjMuNzc3IiB4Mj0iNS43NjQiIHkyPSIxMy43OCIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPjxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI2E2N2FmNCIgLz48c3RvcCBvZmZzZXQ9IjAuOTk5IiBzdG9wLWNvbG9yPSIjNzczYWRjIiAvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxnIGlkPSJiOGEwNDg2YS01NTAxLTRkOTItYjU0MC1hNzY2YzRiM2I1NDgiPjxnPjxnPjxnPjxwYXRoIGQ9Ik0xNi45MzIsMTEuNTc4YTguNDQ4LDguNDQ4LDAsMCwxLTcuOTUsNS41OSw4LjE1LDguMTUsMCwwLDEtMi4zMy0uMzMsMi4xMzMsMi4xMzMsMCwwLDAsLjE4LS44M2MuMDEsMCwuMDMuMDEuMDQuMDFhNy40MjIsNy40MjIsMCwwLDAsMi4xMS4zLDcuNjQ2LDcuNjQ2LDAsMCwwLDYuODUtNC4yOGwuMDEtLjAxWiIgZmlsbD0iIzMyYmVkZCIgLz48cGF0aCBkPSJNMy41ODIsMTQuMDY4YTIuMDI1LDIuMDI1LDAsMCwwLS42NC41Niw4LjYsOC42LDAsMCwxLTEuNjctMi40NGwxLjA0LjIzdi4yNmEuNi42LDAsMCwwLC40Ny41OWwuMTQuMDNhNi4xMzYsNi4xMzYsMCwwLDAsLjYyLjczWiIgZmlsbD0iIzMyYmVkZCIgLz48cGF0aCBkPSJNMTIuMzUyLjk1OGEyLjI4LDIuMjgsMCwwLDAtLjI3LjgxYy0uMDItLjAxLS4wNS0uMDItLjA3LS4wM2E3LjQ3OSw3LjQ3OSwwLDAsMC0zLjAzLS42Myw3LjY0Myw3LjY0MywwLDAsMC01LjksMi44bC0uMjkuMDZhLjYuNiwwLDAsMC0uNDguNTh2LjQ2bC0xLjAyLjE5QTguNDU0LDguNDU0LDAsMCwxLDguOTgyLjI2OCw4LjYsOC42LDAsMCwxLDEyLjM1Mi45NThaIiBmaWxsPSIjMzJiZWRkIiAvPjxwYXRoIGQ9Ik0xNi44NzIsNS43bC0xLjA5LS4zOGE2LjYsNi42LDAsMCwwLS43Mi0xLjE2Yy0uMDItLjAzLS4wNC0uMDUtLjA1LS4wN2EyLjA4MywyLjA4MywwLDAsMCwuNzItLjQ1QTcuODEsNy44MSwwLDAsMSwxNi44NzIsNS43WiIgZmlsbD0iIzMyYmVkZCIgLz48cGF0aCBkPSJNMTAuMDcyLDExLjkwOGwyLjU0LjU2TDguNjcyLDE0LjFjLS4wMiwwLS4wMy4wMS0uMDUuMDFhLjE1NC4xNTQsMCwwLDEtLjE1LS4xNVYzLjQ0OGEuMTU0LjE1NCwwLDAsMSwuMTUtLjE1LjA5LjA5LDAsMCwxLC4wNS4wMWw0LjQ2LDEuNTYtMy4wNS41N2EuNTY1LjU2NSwwLDAsMC0uNDQuNTR2NS40QS41MzcuNTM3LDAsMCwwLDEwLjA3MiwxMS45MDhaIiBmaWxsPSIjZmZmIiAvPjxnPjxnIGlkPSJlOTE4ZjI4Ni01MDMyLTQ5NDItYWQyOS1lYTE3ZTZmMWNjOTAiPjxwYXRoIGQ9Ik0xLjEsNS42NjhsMS4yMS0uMjN2Ni41NWwtMS4yMy0uMjctLjk5LS4yMmEuMTExLjExMSwwLDAsMS0uMDktLjEydi01LjRhLjEyLjEyLDAsMCwxLC4wOS0uMTJaIiBmaWxsPSIjYTY3YWY0IiAvPjwvZz48Zz48ZyBpZD0iYTQ3YTk5ZGQtNGQ0Ny00YzcwLThjNDItYzVhYzI3NGNlNDk2Ij48Zz48cGF0aCBkPSJNMTAuMDcyLDExLjkwOGwyLjU0LjU2TDguNjcyLDE0LjFjLS4wMiwwLS4wMy4wMS0uMDUuMDFhLjE1NC4xNTQsMCwwLDEtLjE1LS4xNVYzLjQ0OGEuMTU0LjE1NCwwLDAsMSwuMTUtLjE1LjA5LjA5LDAsMCwxLC4wNS4wMWw0LjQ2LDEuNTYtMy4wNS41N2EuNTY1LjU2NSwwLDAsMC0uNDQuNTR2NS40QS41MzcuNTM3LDAsMCwwLDEwLjA3MiwxMS45MDhaIiBmaWxsPSJ1cmwoI2IyN2YxYWQwLTdkMTEtNDI0Ny05ZGEzLTkxYmNlNjIxMWYzMikiIC8+PHBhdGggZD0iTTguNTg2LDMuMywyLjg3OCw0LjM3OGEuMTc3LjE3NywwLDAsMC0uMTQuMTc1VjEyLjY4YS4xNzcuMTc3LDAsMCwwLC4xMzcuMTc0TDguNTgxLDE0LjFhLjE3Ni4xNzYsMCwwLDAsLjIxLS4xNzRWMy40NzhBLjE3NS4xNzUsMCwwLDAsOC42MTksMy4zWiIgZmlsbD0idXJsKCNiMmY5MjExMi00Y2E5LTRiMTctYTAxOS1jOWYyNmMxYTRhOGYpIiAvPjwvZz48L2c+PHBvbHlnb24gcG9pbnRzPSI1Ljk0OCA0LjkyMSA1Ljk0OCAxMi40ODMgNy45MzQgMTIuODE0IDcuOTM0IDQuNTY0IDUuOTQ4IDQuOTIxIiBmaWxsPSIjYjc5NmY5IiBvcGFjaXR5PSIwLjUiIC8+PHBvbHlnb24gcG9pbnRzPSIzLjUwOSA1LjMyOSAzLjUwOSAxMS45NTQgNS4yMzggMTIuMzE3IDUuMjM4IDUuMDMxIDMuNTA5IDUuMzI5IiBmaWxsPSIjYjc5NmY5IiBvcGFjaXR5PSIwLjUiIC8+PC9nPjwvZz48L2c+PHBhdGggZD0iTTE2LDIuMDQ4YTEuNzU1LDEuNzU1LDAsMSwxLTEuNzYtMS43NkExLjc1NiwxLjc1NiwwLDAsMSwxNiwyLjA0OFoiIGZpbGw9IiMzMmJlZGQiIC8+PGNpcmNsZSBjeD0iNC42NSIgY3k9IjE1Ljk3MyIgcj0iMS43NTkiIGZpbGw9IiMzMmJlZGQiIC8+PC9nPjxwYXRoIGQ9Ik0xOCw2LjY4OXYzLjg0NGEuMjIyLjIyMiwwLDAsMS0uMTMzLjJsLS43NjYuMzE2LTMuMDcsMS4yNjgtLjAxMSwwYS4xMjYuMTI2LDAsMCwxLS4wMzgsMCwuMS4xLDAsMCwxLS4xLS4xVjUuMjM0YS4xLjEsMCwwLDEsLjA1NC0uMDg4bDAsMCwuMDE5LDBhLjAzMS4wMzEsMCwwLDEsLjAxOSwwLC4wNTUuMDU1LDAsMCwxLC4wMzQuMDA4bC4wMTEsMCwuMDEyLDBMMTcuMDUsNi4ybC44LjI4MkEuMjEzLjIxMywwLDAsMSwxOCw2LjY4OVoiIGZpbGw9IiM3NzNhZGMiIC8+PHBhdGggZD0iTTEzLjk1OSw1LjE0bC0zLjguNzE1YS4xMTguMTE4LDAsMCwwLS4wOTMuMTE3djUuNDA5YS4xMTguMTE4LDAsMCwwLC4wOTEuMTE2bDMuOC44MzFhLjExNS4xMTUsMCwwLDAsLjEzNy0uMDkuMTA5LjEwOSwwLDAsMCwwLS4wMjZWNS4yNTZhLjExNy4xMTcsMCwwLDAtLjExNS0uMTE4QS4wODIuMDgyLDAsMCwwLDEzLjk1OSw1LjE0WiIgZmlsbD0iI2E2N2FmNCIgLz48L2c+PC9nPjwvc3ZnPg==;" vertex="1" parent="1">
+          <mxGeometry x="1170" y="180" width="350" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="c12" value="OPT-IN" style="rounded=1;arcSize=50;fillColor=#5C2D91;strokeColor=#FFFFFF;fontColor=#FFFFFF;fontSize=10;fontStyle=1;html=1;fontFamily=Segoe UI;" vertex="1" parent="1">
+          <mxGeometry x="1440" y="170" width="80" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="c13" value="Parsing + grounded fields" style="text;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=17;fontColor=#201F1E;html=1;fontFamily=Segoe UI;" vertex="1" parent="1">
+          <mxGeometry x="45" y="320" width="320" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="c14" value="LOCAL STRUCTURED" style="rounded=1;fillColor=#0078D4;strokeColor=none;fontColor=#FFFFFF;fontSize=15;html=1;fontFamily=Segoe UI;" vertex="1" parent="1">
+          <mxGeometry x="400" y="320" width="330" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="c15" value="CU CUSTOM SCHEMA" style="rounded=1;fillColor=#0078D4;strokeColor=none;fontColor=#FFFFFF;fontSize=15;html=1;fontFamily=Segoe UI;" vertex="1" parent="1">
+          <mxGeometry x="790" y="320" width="330" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="c16" value="NOT RUN" style="rounded=1;fillColor=#605E5C;strokeColor=none;fontColor=#FFFFFF;fontSize=15;html=1;fontFamily=Segoe UI;" vertex="1" parent="1">
+          <mxGeometry x="1180" y="320" width="330" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="c17" value="Roles + restricted data" style="text;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=17;fontColor=#201F1E;html=1;fontFamily=Segoe UI;" vertex="1" parent="1">
+          <mxGeometry x="45" y="405" width="320" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="c18" value="REQUIRED" style="rounded=1;fillColor=#0078D4;strokeColor=none;fontColor=#FFFFFF;fontSize=15;html=1;fontFamily=Segoe UI;" vertex="1" parent="1">
+          <mxGeometry x="400" y="405" width="330" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="c19" value="TOKEN NEGATIVES" style="rounded=1;fillColor=#0078D4;strokeColor=none;fontColor=#FFFFFF;fontSize=15;html=1;fontFamily=Segoe UI;" vertex="1" parent="1">
+          <mxGeometry x="790" y="405" width="330" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="c20" value="NOT RUN" style="rounded=1;fillColor=#605E5C;strokeColor=none;fontColor=#FFFFFF;fontSize=15;html=1;fontFamily=Segoe UI;" vertex="1" parent="1">
+          <mxGeometry x="1180" y="405" width="330" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="c21" value="Approval + freeze" style="text;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=17;fontColor=#201F1E;html=1;fontFamily=Segoe UI;" vertex="1" parent="1">
+          <mxGeometry x="45" y="490" width="320" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="c22" value="REQUIRED" style="rounded=1;fillColor=#0078D4;strokeColor=none;fontColor=#FFFFFF;fontSize=15;html=1;fontFamily=Segoe UI;" vertex="1" parent="1">
+          <mxGeometry x="400" y="490" width="330" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="c23" value="ETAG CONFLICT" style="rounded=1;fillColor=#0078D4;strokeColor=none;fontColor=#FFFFFF;fontSize=15;html=1;fontFamily=Segoe UI;" vertex="1" parent="1">
+          <mxGeometry x="790" y="490" width="330" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="c24" value="NOT RUN" style="rounded=1;fillColor=#605E5C;strokeColor=none;fontColor=#FFFFFF;fontSize=15;html=1;fontFamily=Segoe UI;" vertex="1" parent="1">
+          <mxGeometry x="1180" y="490" width="330" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="c25" value="Quality + abstention" style="text;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=17;fontColor=#201F1E;html=1;fontFamily=Segoe UI;" vertex="1" parent="1">
+          <mxGeometry x="45" y="575" width="320" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="c26" value="TINY FIXTURES" style="rounded=1;fillColor=#0078D4;strokeColor=none;fontColor=#FFFFFF;fontSize=15;html=1;fontFamily=Segoe UI;" vertex="1" parent="1">
+          <mxGeometry x="400" y="575" width="330" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="c27" value="OUTPUT REJECTION" style="rounded=1;fillColor=#0078D4;strokeColor=none;fontColor=#FFFFFF;fontSize=15;html=1;fontFamily=Segoe UI;" vertex="1" parent="1">
+          <mxGeometry x="790" y="575" width="330" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="c28" value="NOT RUN" style="rounded=1;fillColor=#605E5C;strokeColor=none;fontColor=#FFFFFF;fontSize=15;html=1;fontFamily=Segoe UI;" vertex="1" parent="1">
+          <mxGeometry x="1180" y="575" width="330" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="c29" value="Restart persistence" style="text;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=17;fontColor=#201F1E;html=1;fontFamily=Segoe UI;" vertex="1" parent="1">
+          <mxGeometry x="45" y="660" width="320" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="c30" value="ATOMIC JSON" style="rounded=1;fillColor=#0078D4;strokeColor=none;fontColor=#FFFFFF;fontSize=15;html=1;fontFamily=Segoe UI;" vertex="1" parent="1">
+          <mxGeometry x="400" y="660" width="330" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="c31" value="COSMOS CONTRACT" style="rounded=1;fillColor=#0078D4;strokeColor=none;fontColor=#FFFFFF;fontSize=15;html=1;fontFamily=Segoe UI;" vertex="1" parent="1">
+          <mxGeometry x="790" y="660" width="330" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="c32" value="NOT RUN" style="rounded=1;fillColor=#605E5C;strokeColor=none;fontColor=#FFFFFF;fontSize=15;html=1;fontFamily=Segoe UI;" vertex="1" parent="1">
+          <mxGeometry x="1180" y="660" width="330" height="55" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

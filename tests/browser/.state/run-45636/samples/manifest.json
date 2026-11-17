@@ -1,0 +1,177 @@
+{
+  "synthetic": true,
+  "description": "Public generated sources; expected input values are ground truth, not prerecorded extraction.",
+  "customers": [
+    {
+      "id": "northstar",
+      "name": "Northstar Components"
+    },
+    {
+      "id": "alpine",
+      "name": "Alpine Mobility"
+    },
+    {
+      "id": "harbor",
+      "name": "Harbor Systems"
+    }
+  ],
+  "files": [
+    {
+      "name": "synthetic-northstar.pdf",
+      "customerId": "northstar",
+      "period": "2026-10",
+      "expected": [
+        {
+          "kpi": "On-time delivery",
+          "value": 98,
+          "unit": "%",
+          "uncertain": false,
+          "customerRating": "Source accepted (synthetic)"
+        },
+        {
+          "kpi": "Defect rate",
+          "value": 100,
+          "unit": "ppm",
+          "uncertain": false,
+          "customerRating": "Source accepted (synthetic)"
+        },
+        {
+          "kpi": "Response time",
+          "value": 2,
+          "unit": "days",
+          "uncertain": false,
+          "customerRating": "Source accepted (synthetic)"
+        },
+        {
+          "kpi": "Cumulative events",
+          "value": 6,
+          "unit": "count",
+          "uncertain": false,
+          "customerRating": "Source accepted (synthetic)"
+        }
+      ]
+    },
+    {
+      "name": "synthetic-alpine.xlsx",
+      "customerId": "alpine",
+      "period": "2026-10",
+      "expected": [
+        {
+          "kpi": "Liefertermintreue",
+          "value": 98,
+          "unit": "%",
+          "uncertain": false,
+          "customerRating": "Source accepted (synthetic)"
+        },
+        {
+          "kpi": "Fehlerquote",
+          "value": "",
+          "unit": "ppm",
+          "uncertain": false,
+          "customerRating": "Source accepted (synthetic)"
+        },
+        {
+          "kpi": "Reaktionszeit",
+          "value": 2,
+          "unit": "days",
+          "uncertain": true,
+          "customerRating": "Source accepted (synthetic)"
+        },
+        {
+          "kpi": "Annual event total",
+          "value": 6,
+          "unit": "count",
+          "uncertain": false,
+          "customerRating": "Source accepted (synthetic)"
+        }
+      ]
+    },
+    {
+      "name": "synthetic-harbor.csv",
+      "customerId": "harbor",
+      "period": "2026-10",
+      "expected": [
+        {
+          "kpi": "On-time delivery",
+          "value": 94,
+          "unit": "%",
+          "uncertain": false,
+          "customerRating": "Source accepted (synthetic)"
+        },
+        {
+          "kpi": "Defect rate",
+          "value": 251,
+          "unit": "ppm",
+          "uncertain": false,
+          "customerRating": "Source accepted (synthetic)"
+        },
+        {
+          "kpi": "Response time",
+          "value": 6,
+          "unit": "days",
+          "uncertain": false,
+          "customerRating": "Source accepted (synthetic)"
+        },
+        {
+          "kpi": "Cumulative events",
+          "value": 7,
+          "unit": "count",
+          "uncertain": false,
+          "customerRating": "Source accepted (synthetic)"
+        }
+      ]
+    },
+    {
+      "name": "synthetic-decimal.txt",
+      "customerId": "alpine",
+      "period": "2026-10",
+      "expected": [
+        {
+          "kpi": "Liefertermintreue",
+          "value": 97.4,
+          "unit": "%"
+        },
+        {
+          "kpi": "Unmapped synthetic indicator",
+          "value": 12,
+          "unit": "items"
+        }
+      ]
+    },
+    {
+      "name": "synthetic-harbor.json",
+      "customerId": "harbor",
+      "period": "2026-10",
+      "expected": [
+        {
+          "kpi": "On-time delivery",
+          "value": 98,
+          "unit": "%",
+          "uncertain": false,
+          "customerRating": "Source accepted (synthetic)"
+        },
+        {
+          "kpi": "Defect rate",
+          "value": 100,
+          "unit": "ppm",
+          "uncertain": false,
+          "customerRating": "Source accepted (synthetic)"
+        },
+        {
+          "kpi": "Response time",
+          "value": 2,
+          "unit": "days",
+          "uncertain": false,
+          "customerRating": "Source accepted (synthetic)"
+        },
+        {
+          "kpi": "Cumulative events",
+          "value": 6,
+          "unit": "count",
+          "uncertain": false,
+          "customerRating": "Source accepted (synthetic)"
+        }
+      ]
+    }
+  ]
+}

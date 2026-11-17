@@ -1,0 +1,33 @@
+{
+  "synthetic": true,
+  "records": [
+    {
+      "kpi": "On-time delivery",
+      "value": 98,
+      "unit": "%",
+      "uncertain": false,
+      "customerRating": "Source accepted (synthetic)"
+    },
+    {
+      "kpi": "Defect rate",
+      "value": 100,
+      "unit": "ppm",
+      "uncertain": false,
+      "customerRating": "Source accepted (synthetic)"
+    },
+    {
+      "kpi": "Response time",
+      "value": 2,
+      "unit": "days",
+      "uncertain": false,
+      "customerRating": "Source accepted (synthetic)"
+    },
+    {
+      "kpi": "Cumulative events",
+      "value": 6,
+      "unit": "count",
+      "uncertain": false,
+      "customerRating": "Source accepted (synthetic)"
+    }
+  ]
+}

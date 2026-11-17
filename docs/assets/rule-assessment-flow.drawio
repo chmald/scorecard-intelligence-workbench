@@ -1,0 +1,95 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mxfile host="Electron" version="26.0.0">
+  <diagram id="rule-assessment-flow" name="Deterministic rule assessment">
+    <mxGraphModel grid="1" gridSize="10" page="1" pageWidth="1800" pageHeight="1150" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="c1" value="" style="rounded=0;fillColor=#0078D4;strokeColor=none;html=1;fontFamily=Segoe UI;" vertex="1" parent="1">
+          <mxGeometry x="20" y="20" width="990.0000000000001" height="6" as="geometry" />
+        </mxCell>
+        <mxCell id="c2" value="" style="rounded=0;fillColor=#5C2D91;strokeColor=none;html=1;fontFamily=Segoe UI;" vertex="1" parent="1">
+          <mxGeometry x="1010.0000000000001" y="20" width="770.0" height="6" as="geometry" />
+        </mxCell>
+        <mxCell id="c3" value="&lt;b&gt;Deterministic rule assessment&lt;/b&gt;" style="text;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=28;fontColor=#201F1E;html=1;fontFamily=Segoe UI;" vertex="1" parent="1">
+          <mxGeometry x="40" y="40" width="1720" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="c4" value="Keep source ratings, internal status and optional baseline gaps separate; never invent missing annual evidence." style="text;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=16;fontColor=#605E5C;html=1;fontFamily=Segoe UI;" vertex="1" parent="1">
+          <mxGeometry x="40" y="100" width="1720" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="c5" value="Legend: DEFAULT = reproducible local path | OPT-IN = Azure capability | GATE = human or policy decision" style="text;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=13;fontColor=#605E5C;html=1;fontFamily=Segoe UI;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1060" width="1720" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="c6" value="Scorecard Intelligence Workbench | 2026-11-17 | Icons: Microsoft Azure V24 + Entra + official Content Understanding artwork" style="text;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=11;fontColor=#605E5C;html=1;fontFamily=Segoe UI;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1100" width="1720" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="c7" value="Known KPI and&lt;br&gt;numeric source value?" style="rhombus;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#0078D4;fontSize=15;html=1;fontFamily=Segoe UI;" vertex="1" parent="1">
+          <mxGeometry x="80" y="190" width="260" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="c8" value="&lt;b&gt;Unresolved evidence&lt;/b&gt;&lt;br&gt;&lt;font color='#605E5C'&gt;Missing / unknown; cannot confirm or publish&lt;/font&gt;" style="shape=label;rounded=1;arcSize=10;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#0078D4;strokeWidth=1.5;fontSize=15;align=left;verticalAlign=middle;spacingLeft=62;spacingRight=12;imageWidth=40;imageHeight=40;imageAlign=left;iconKey=alerts;html=1;fontFamily=Segoe UI;image=data:image/svg+xml,PHN2ZyBpZD0iYTlmNTZiNGUtMmE1MS00NDcxLTk0ODgtZDQ2MTQwOGFlNGViIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOCIgaGVpZ2h0PSIxOCIgdmlld0JveD0iMCAwIDE4IDE4Ij48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImU0ZTFlNDk0LTIxZjEtNGU5Yy1hNmZhLTA5OTNlZmZmMDhkMyIgeDE9IjkiIHkxPSIxNy4yIiB4Mj0iOSIgeTI9Ii0zLjI4IiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjNWU5NjI0IiAvPjxzdG9wIG9mZnNldD0iMC4xOCIgc3RvcC1jb2xvcj0iIzYyOWMyNSIgLz48c3RvcCBvZmZzZXQ9IjAuNDQiIHN0b3AtY29sb3I9IiM2ZGFlMmEiIC8+PHN0b3Agb2Zmc2V0PSIwLjczIiBzdG9wLWNvbG9yPSIjN2ZjYjMwIiAvPjxzdG9wIG9mZnNldD0iMC44MiIgc3RvcC1jb2xvcj0iIzg2ZDYzMyIgLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48Zz48cGF0aCBkPSJNMTcuNSwyLjVWMTMuMzNhLjU4LjU4LDAsMCwxLS41OC41OEgxMi40YS4xNS4xNSwwLDAsMC0uMTUuMTRWMTUuOGEuMjguMjgsMCwwLDEtLjQ1LjIzTDkuMDgsMTMuOTRsLS4wOSwwSDEuMDhhLjU4LjU4LDAsMCwxLS41OC0uNThWMi41YS41OC41OCwwLDAsMSwuNTgtLjU5SDE2LjkyQS41OC41OCwwLDAsMSwxNy41LDIuNVoiIGZpbGw9InVybCgjZTRlMWU0OTQtMjFmMS00ZTljLWE2ZmEtMDk5M2VmZmYwOGQzKSIgLz48cGF0aCBkPSJNOS41NCw5LjYzSDguMzhBLjM2LjM2LDAsMCwxLDgsOS4yOUw3LjgsMy40M2EuMzUuMzUsMCwwLDEsLjM1LS4zNmgxLjdhLjM1LjM1LDAsMCwxLC4zNS4zN0w5Ljg5LDkuM0EuMzUuMzUsMCwwLDEsOS41NCw5LjYzWiIgZmlsbD0iI2ZmZiIgLz48cmVjdCB4PSI4LjEzIiB5PSIxMC42MiIgd2lkdGg9IjEuNjkiIGhlaWdodD0iMS42OSIgcng9IjAuNjEiIGZpbGw9IiNmZmYiIC8+PC9nPjwvc3ZnPg==;" vertex="1" parent="1">
+          <mxGeometry x="30" y="470" width="390" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="c9" value="GATE" style="rounded=1;arcSize=50;fillColor=#036C70;strokeColor=#FFFFFF;fontColor=#FFFFFF;fontSize=10;fontStyle=1;html=1;fontFamily=Segoe UI;" vertex="1" parent="1">
+          <mxGeometry x="340" y="460" width="80" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="c10" value="Configured rule is&lt;br&gt;annual_cumulative?" style="rhombus;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#0078D4;fontSize=15;html=1;fontFamily=Segoe UI;" vertex="1" parent="1">
+          <mxGeometry x="670" y="190" width="260" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="c11" value="&lt;b&gt;Ordered thresholds&lt;/b&gt;&lt;br&gt;&lt;font color='#605E5C'&gt;Higher/lower target, watch, warning&lt;/font&gt;" style="shape=label;rounded=1;arcSize=10;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#0078D4;strokeWidth=1.5;fontSize=15;align=left;verticalAlign=middle;spacingLeft=62;spacingRight=12;imageWidth=40;imageHeight=40;imageAlign=left;iconKey=gear;html=1;fontFamily=Segoe UI;image=data:image/svg+xml,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOCIgaGVpZ2h0PSIxOCIgdmlld0JveD0iMCAwIDE4IDE4Ij48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImI3NmJhMzU2LTNkMjktNDFmNS1hNTIxLTg2NDdmZTg0YThiNCIgeDE9IjkiIHkxPSIyOTcuNSIgeDI9IjkiIHkyPSIyODAuNSIgZ3JhZGllbnRUcmFuc2Zvcm09InRyYW5zbGF0ZSgwIC0yODApIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjMzJiZWRkIiAvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzMyZDRmNSIgLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cGF0aCBkPSJNMTcuNSw5LjlWOGwtLjMtLjEtMi4xLS43LS41LTEuMywxLjEtMi4yTDE0LjMsMi4zbC0uMy4xLTEuOSwxLTEuMy0uNUw5LjkuNUg4TDcuOS44bC0uNywyLTEuMy42TDMuNywyLjMsMi4zLDMuN2wuMS4zLDEsMS45TDIuOSw3LjIuNSw4LjFWMTBsLjMuMSwyLjEuNy41LDEuM0wyLjMsMTQuM2wxLjQsMS40LjMtLjEsMS45LTEsMS4zLjUuOSwyLjNIMTBsLjEtLjMuNy0yLjEsMS4zLS41LDIuMiwxLjEsMS40LTEuNC0uMS0uMi0xLTEuOS41LTEuM1oiIGZpbGw9InVybCgjYjc2YmEzNTYtM2QyOS00MWY1LWE1MjEtODY0N2ZlODRhOGI0KSIgLz48cGF0aCBkPSJNMTIuMyw2LjVsLS44LjdhMi45MTEsMi45MTEsMCwwLDEtLjMsNC4yQTIuOTA2LDIuOTA2LDAsMCwxLDcsMTEuMSwyLjkxLDIuOTEsMCwwLDEsNyw3LjJoLjFsLjYuNWguMVY3LjZsLS4yLTJjMC0uMS0uMS0uMS0uMi0uMWwtMS45LjNhLjEuMSwwLDAsMC0uMS4xaDBsLjYuNUg2di4xSDZhMy45NzYsMy45NzYsMCwxLDAsNi4xLDUuMUEzLjYzLDMuNjMsMCwwLDAsMTIuMyw2LjVaIiBmaWxsPSIjZmZmIiAvPjwvc3ZnPg==;" vertex="1" parent="1">
+          <mxGeometry x="580" y="470" width="440" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="c12" value="DEFAULT" style="rounded=1;arcSize=50;fillColor=#0078D4;strokeColor=#FFFFFF;fontColor=#FFFFFF;fontSize=10;fontStyle=1;html=1;fontFamily=Segoe UI;" vertex="1" parent="1">
+          <mxGeometry x="940" y="460" width="80" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="c13" value="Required annual&lt;br&gt;evidence complete?" style="rhombus;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#0078D4;fontSize=15;html=1;fontFamily=Segoe UI;" vertex="1" parent="1">
+          <mxGeometry x="1280" y="190" width="260" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="c14" value="&lt;b&gt;Abstain annual total&lt;/b&gt;&lt;br&gt;&lt;font color='#605E5C'&gt;No missing-month extrapolation&lt;/font&gt;" style="shape=label;rounded=1;arcSize=10;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#0078D4;strokeWidth=1.5;fontSize=15;align=left;verticalAlign=middle;spacingLeft=62;spacingRight=12;imageWidth=40;imageHeight=40;imageAlign=left;iconKey=alerts;html=1;fontFamily=Segoe UI;image=data:image/svg+xml,PHN2ZyBpZD0iYTlmNTZiNGUtMmE1MS00NDcxLTk0ODgtZDQ2MTQwOGFlNGViIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOCIgaGVpZ2h0PSIxOCIgdmlld0JveD0iMCAwIDE4IDE4Ij48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImU0ZTFlNDk0LTIxZjEtNGU5Yy1hNmZhLTA5OTNlZmZmMDhkMyIgeDE9IjkiIHkxPSIxNy4yIiB4Mj0iOSIgeTI9Ii0zLjI4IiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjNWU5NjI0IiAvPjxzdG9wIG9mZnNldD0iMC4xOCIgc3RvcC1jb2xvcj0iIzYyOWMyNSIgLz48c3RvcCBvZmZzZXQ9IjAuNDQiIHN0b3AtY29sb3I9IiM2ZGFlMmEiIC8+PHN0b3Agb2Zmc2V0PSIwLjczIiBzdG9wLWNvbG9yPSIjN2ZjYjMwIiAvPjxzdG9wIG9mZnNldD0iMC44MiIgc3RvcC1jb2xvcj0iIzg2ZDYzMyIgLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48Zz48cGF0aCBkPSJNMTcuNSwyLjVWMTMuMzNhLjU4LjU4LDAsMCwxLS41OC41OEgxMi40YS4xNS4xNSwwLDAsMC0uMTUuMTRWMTUuOGEuMjguMjgsMCwwLDEtLjQ1LjIzTDkuMDgsMTMuOTRsLS4wOSwwSDEuMDhhLjU4LjU4LDAsMCwxLS41OC0uNThWMi41YS41OC41OCwwLDAsMSwuNTgtLjU5SDE2LjkyQS41OC41OCwwLDAsMSwxNy41LDIuNVoiIGZpbGw9InVybCgjZTRlMWU0OTQtMjFmMS00ZTljLWE2ZmEtMDk5M2VmZmYwOGQzKSIgLz48cGF0aCBkPSJNOS41NCw5LjYzSDguMzhBLjM2LjM2LDAsMCwxLDgsOS4yOUw3LjgsMy40M2EuMzUuMzUsMCwwLDEsLjM1LS4zNmgxLjdhLjM1LjM1LDAsMCwxLC4zNS4zN0w5Ljg5LDkuM0EuMzUuMzUsMCwwLDEsOS41NCw5LjYzWiIgZmlsbD0iI2ZmZiIgLz48cmVjdCB4PSI4LjEzIiB5PSIxMC42MiIgd2lkdGg9IjEuNjkiIGhlaWdodD0iMS42OSIgcng9IjAuNjEiIGZpbGw9IiNmZmYiIC8+PC9nPjwvc3ZnPg==;" vertex="1" parent="1">
+          <mxGeometry x="1190" y="470" width="500" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="c15" value="GATE" style="rounded=1;arcSize=50;fillColor=#036C70;strokeColor=#FFFFFF;fontColor=#FFFFFF;fontSize=10;fontStyle=1;html=1;fontFamily=Segoe UI;" vertex="1" parent="1">
+          <mxGeometry x="1610" y="460" width="80" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="c16" value="&lt;b&gt;Explicit annual comparison&lt;/b&gt;&lt;br&gt;&lt;font color='#605E5C'&gt;Source YTD or complete unique monthly sum&lt;/font&gt;" style="shape=label;rounded=1;arcSize=10;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#0078D4;strokeWidth=1.5;fontSize=15;align=left;verticalAlign=middle;spacingLeft=62;spacingRight=12;imageWidth=40;imageHeight=40;imageAlign=left;iconKey=gear;html=1;fontFamily=Segoe UI;image=data:image/svg+xml,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOCIgaGVpZ2h0PSIxOCIgdmlld0JveD0iMCAwIDE4IDE4Ij48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImI3NmJhMzU2LTNkMjktNDFmNS1hNTIxLTg2NDdmZTg0YThiNCIgeDE9IjkiIHkxPSIyOTcuNSIgeDI9IjkiIHkyPSIyODAuNSIgZ3JhZGllbnRUcmFuc2Zvcm09InRyYW5zbGF0ZSgwIC0yODApIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjMzJiZWRkIiAvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzMyZDRmNSIgLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cGF0aCBkPSJNMTcuNSw5LjlWOGwtLjMtLjEtMi4xLS43LS41LTEuMywxLjEtMi4yTDE0LjMsMi4zbC0uMy4xLTEuOSwxLTEuMy0uNUw5LjkuNUg4TDcuOS44bC0uNywyLTEuMy42TDMuNywyLjMsMi4zLDMuN2wuMS4zLDEsMS45TDIuOSw3LjIuNSw4LjFWMTBsLjMuMSwyLjEuNy41LDEuM0wyLjMsMTQuM2wxLjQsMS40LjMtLjEsMS45LTEsMS4zLjUuOSwyLjNIMTBsLjEtLjMuNy0yLjEsMS4zLS41LDIuMiwxLjEsMS40LTEuNC0uMS0uMi0xLTEuOS41LTEuM1oiIGZpbGw9InVybCgjYjc2YmEzNTYtM2QyOS00MWY1LWE1MjEtODY0N2ZlODRhOGI0KSIgLz48cGF0aCBkPSJNMTIuMyw2LjVsLS44LjdhMi45MTEsMi45MTEsMCwwLDEtLjMsNC4yQTIuOTA2LDIuOTA2LDAsMCwxLDcsMTEuMSwyLjkxLDIuOTEsMCwwLDEsNyw3LjJoLjFsLjYuNWguMVY3LjZsLS4yLTJjMC0uMS0uMS0uMS0uMi0uMWwtMS45LjNhLjEuMSwwLDAsMC0uMS4xaDBsLjYuNUg2di4xSDZhMy45NzYsMy45NzYsMCwxLDAsNi4xLDUuMUEzLjYzLDMuNjMsMCwwLDAsMTIuMyw2LjVaIiBmaWxsPSIjZmZmIiAvPjwvc3ZnPg==;" vertex="1" parent="1">
+          <mxGeometry x="1120" y="760" width="570" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="c17" value="DEFAULT" style="rounded=1;arcSize=50;fillColor=#0078D4;strokeColor=#FFFFFF;fontColor=#FFFFFF;fontSize=10;fontStyle=1;html=1;fontFamily=Segoe UI;" vertex="1" parent="1">
+          <mxGeometry x="1610" y="750" width="80" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="c18" value="&lt;b&gt;Separate baseline comparison&lt;/b&gt;&lt;br&gt;&lt;font color='#605E5C'&gt;Only explicit baseline; keep provenance&lt;/font&gt;" style="shape=label;rounded=1;arcSize=10;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#0078D4;strokeWidth=1.5;fontSize=15;align=left;verticalAlign=middle;spacingLeft=62;spacingRight=12;imageWidth=40;imageHeight=40;imageAlign=left;iconKey=file;html=1;fontFamily=Segoe UI;image=data:image/svg+xml,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOCIgaGVpZ2h0PSIxOCIgdmlld0JveD0iMCAwIDE4IDE4Ij48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImU1MzcxNTY1LWNjOWItNDcyOS05ZTU0LTliYWMxMzVhOTJiZCIgeDE9IjkiIHkxPSIxOCIgeDI9IjkiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiMwMDc4ZDQiIC8+PHN0b3Agb2Zmc2V0PSIwLjgxNyIgc3RvcC1jb2xvcj0iIzVlYTBlZiIgLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48dGl0bGU+TXNQb3J0YWxGeC5iYXNlLmltYWdlcy0yMjwvdGl0bGU+PGcgaWQ9ImFiYzNlM2Y5LWQ0ZGItNDFhZC04YjYwLTM3OGQxYzMzNDhmNyI+PGc+PGc+PHBhdGggZD0iTTEwLjAyMy4xMzRIMi4zNjJBLjYwNS42MDUsMCwwLDAsMS43NTcuNzRWMTcuMjZhLjYwNS42MDUsMCwwLDAsLjYwNS42MDZIMTUuNjM4YS42MDUuNjA1LDAsMCwwLC42LS42MDZWNi4zMjdhLjYwNS42MDUsMCwwLDAtLjYtLjYwNkgxMS4yMzJhLjYwNS42MDUsMCwwLDEtLjYtLjYwNVYuNzRBLjYuNiwwLDAsMCwxMC4wMjMuMTM0WiIgZmlsbD0iI2ZmZiIgLz48cGF0aCBkPSJNOS43NDMuOTA4VjUuMDU3YTEuNTI0LDEuNTI0LDAsMCwwLDEuNTIsMS41MjNoNC4xOFYxNy4wOTJIMi41NTdWLjkwOEg5Ljc0M00xMC4wMzYsMEgyLjI2NEEuNjE0LjYxNCwwLDAsMCwxLjY1LjYxNXYxNi43N0EuNjE0LjYxNCwwLDAsMCwyLjI2NCwxOEgxNS43MzZhLjYxNC42MTQsMCwwLDAsLjYxNC0uNjE1VjYuMjg2YS42MTQuNjE0LDAsMCwwLS42MTQtLjYxNEgxMS4yNjNhLjYxNC42MTQsMCwwLDEtLjYxMy0uNjE1Vi42MTVBLjYxNC42MTQsMCwwLDAsMTAuMDM2LDBaIiBmaWxsPSJ1cmwoI2U1MzcxNTY1LWNjOWItNDcyOS05ZTU0LTliYWMxMzVhOTJiZCkiIC8+PHBhdGggZD0iTTE2LjExNiw1Ljc5NCwxMC40MzguMTM0VjQuNzQ2YTEuMDQxLDEuMDQxLDAsMCwwLDEuMDM1LDEuMDQ4WiIgZmlsbD0iIzAwNzhkNCIgLz48L2c+PHJlY3QgeD0iNCIgeT0iOC4xOTYiIHdpZHRoPSI5Ljk5OSIgaGVpZ2h0PSIxLjM0MSIgcng9IjAuNjAzIiBmaWxsPSIjNWVhMGVmIiAvPjxyZWN0IHg9IjQiIHk9IjEwLjU5OSIgd2lkdGg9IjkuOTk5IiBoZWlnaHQ9IjEuMzQxIiByeD0iMC42MDMiIGZpbGw9IiM1ZWEwZWYiIC8+PHJlY3QgeD0iNCIgeT0iMTMuMDAyIiB3aWR0aD0iNi4zMDIiIGhlaWdodD0iMS4zNDEiIHJ4PSIwLjYwMyIgZmlsbD0iIzVlYTBlZiIgLz48L2c+PC9nPjwvc3ZnPg==;" vertex="1" parent="1">
+          <mxGeometry x="100" y="760" width="650" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="c19" value="DEFAULT" style="rounded=1;arcSize=50;fillColor=#0078D4;strokeColor=#FFFFFF;fontColor=#FFFFFF;fontSize=10;fontStyle=1;html=1;fontFamily=Segoe UI;" vertex="1" parent="1">
+          <mxGeometry x="670" y="750" width="80" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="e20" value="No" style="edgeStyle=orthogonalEdgeStyle;rounded=0;endArrow=classic;html=1;strokeColor=#0078D4;strokeWidth=2;dashed=0;fontSize=13;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="c7" target="c8">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e21" value="Yes" style="edgeStyle=orthogonalEdgeStyle;rounded=0;endArrow=classic;html=1;strokeColor=#0078D4;strokeWidth=2;dashed=0;fontSize=13;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="c7" target="c10">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e22" value="No" style="edgeStyle=orthogonalEdgeStyle;rounded=0;endArrow=classic;html=1;strokeColor=#0078D4;strokeWidth=2;dashed=0;fontSize=13;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="c10" target="c11">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e23" value="Yes" style="edgeStyle=orthogonalEdgeStyle;rounded=0;endArrow=classic;html=1;strokeColor=#0078D4;strokeWidth=2;dashed=0;fontSize=13;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="c10" target="c13">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e24" value="No" style="edgeStyle=orthogonalEdgeStyle;rounded=0;endArrow=classic;html=1;strokeColor=#0078D4;strokeWidth=2;dashed=0;fontSize=13;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="c13" target="c14">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e25" value="Yes" style="edgeStyle=orthogonalEdgeStyle;rounded=0;endArrow=classic;html=1;strokeColor=#0078D4;strokeWidth=2;dashed=0;fontSize=13;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.5;entryX=0.5;entryY=0;" edge="1" parent="1" source="c13" target="c16">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1730" y="260" />
+              <mxPoint x="1730" y="700" />
+              <mxPoint x="1405" y="700" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="c26" value="Source rating is preserved independently. Overall rollup remains undecided: show counts, not a fabricated composite grade." style="text;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=17;fontColor=#201F1E;html=1;fontFamily=Segoe UI;" vertex="1" parent="1">
+          <mxGeometry x="70" y="940" width="1650" height="55" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

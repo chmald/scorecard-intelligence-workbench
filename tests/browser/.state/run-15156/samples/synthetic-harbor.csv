@@ -1,0 +1,5 @@
+KPI;Value;Unit;Customer rating
+On-time delivery;94;%;Source accepted (synthetic)
+Defect rate;251;ppm;Source accepted (synthetic)
+Response time;6;days;Source accepted (synthetic)
+Cumulative events;7;count;Source accepted (synthetic)

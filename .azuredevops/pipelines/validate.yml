@@ -1,0 +1,41 @@
+trigger:
+  branches:
+    include:
+      - main
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+  - task: NodeTool@0
+    inputs:
+      versionSpec: 24.x
+    displayName: Use Node.js 24
+  - script: npm ci
+    displayName: Restore locked dependencies
+  - script: npm test
+    displayName: Run fixture, authorization and configuration tests
+  - script: az bicep build --file infra/azd.bicep --stdout > /dev/null
+    displayName: Compile shared infrastructure without deployment
+  - pwsh: |
+      $files = @(Get-ChildItem infra -Filter *.ps1 -Recurse) + @(Get-Item scripts/deploy.ps1,scripts/start-local.ps1)
+      foreach ($file in $files) {
+        $tokens = $null
+        $errors = $null
+        $null = [Management.Automation.Language.Parser]::ParseFile($file.FullName, [ref]$tokens, [ref]$errors)
+        if ($errors.Count) { throw ($errors | Out-String) }
+      }
+    displayName: Parse PowerShell hooks
+  - script: docker build --tag workbench:ci .
+    displayName: Build unprivileged application image
+
+# Deployment is intentionally opt-in. Create an Azure Resource Manager service
+# connection using workload identity federation; authorize only the demo scope.
+# Supply AZURE_TENANT_ID, AZURE_SUBSCRIPTION_ID, AZURE_ENV_NAME, AZURE_LOCATION,
+# ENTRA_AUDIENCE, ENTRA_CLIENT_ID and ENTRA_API_SCOPE in protected pipeline
+# variables. These application identifiers are public; no client secret is used.
+# Never run interactive login here.
+# An AzureCLI@2 task with that service connection can invoke:
+# pwsh -File scripts/deploy.ps1
+# The selected principal also needs resource-group creation, role assignment write,
+# Cosmos SQL role assignment write and ACR Tasks build permissions.
